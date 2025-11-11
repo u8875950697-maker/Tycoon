@@ -41,6 +41,8 @@ var parallax_time := 0.0
 var care_refresh_timer := 0.0
 var world_buff_info := {}
 var world_buff_used := false
+var reduce_motion_enabled := false
+var particle_default_settings := {}
 
 func _add_buff(kind: String, duration: float, multiplier: float, source: String) -> void:
     if not active_buffs.has(kind):
@@ -152,6 +154,9 @@ func _register_ui() -> void:
     UIManager.register_welcome_popup(welcome_popup)
     UIManager.register_run_summary(run_summary)
     UIManager.register_world_select(world_select)
+    UIManager.register_world_scene(self)
+    UIManager.apply_high_contrast(GameState.get_setting("high_contrast", false))
+    UIManager.apply_reduce_motion(GameState.get_setting("reduce_motion", false))
     UIManager.configure_dev_toggle(GameState.monetization.get("dev_cheats", false), false)
     world_select.visible = true
 
@@ -278,6 +283,7 @@ func _configure_particles(data: Dictionary) -> void:
         return
     for child in particle_root.get_children():
         child.queue_free()
+    particle_default_settings.clear()
     if data.is_empty():
         return
     var particles := GPUParticles3D.new()
@@ -310,6 +316,23 @@ func _configure_particles(data: Dictionary) -> void:
     mesh.material = mat
     particles.draw_pass_1 = mesh
     particle_root.add_child(particles)
+    particle_default_settings = {
+        "amount": particles.amount,
+        "speed_scale": particles.speed_scale
+    }
+    _apply_particle_motion_state(particles)
+
+func _apply_particle_motion_state(particles: GPUParticles3D) -> void:
+    if particles == null:
+        return
+    var base_amount := int(particle_default_settings.get("amount", particles.amount))
+    var base_speed := float(particle_default_settings.get("speed_scale", particles.speed_scale))
+    if reduce_motion_enabled:
+        particles.amount = max(1, int(round(base_amount * 0.35)))
+        particles.speed_scale = max(0.2, base_speed * 0.5)
+    else:
+        particles.amount = max(1, base_amount)
+        particles.speed_scale = max(0.01, base_speed)
 
 func _configure_vignette(color: Color) -> void:
     if vignette_rect == null:
@@ -597,7 +620,7 @@ func _update_parallax(delta: float) -> void:
     if parallax_root == null or parallax_bases.is_empty():
         return
     parallax_time = fmod(parallax_time + delta * 0.6, TAU)
-    var wave := sin(parallax_time) * 0.5
+    var wave := reduce_motion_enabled ? 0.0 : sin(parallax_time) * 0.5
     var camera_offset := 0.0
     if world_camera:
         camera_offset = clamp(world_camera.global_position.x * 0.05, -0.6, 0.6)
@@ -616,3 +639,14 @@ func _update_parallax(delta: float) -> void:
             "Sky":
                 weight = 0.1
         child.position.x = base_pos.x + wave * weight + camera_offset * weight
+
+func apply_reduce_motion(enabled: bool) -> void:
+    reduce_motion_enabled = enabled
+    if parallax_root and reduce_motion_enabled:
+        for child in parallax_root.get_children():
+            if parallax_bases.has(child.name):
+                child.position = parallax_bases[child.name]
+    if particle_root:
+        for child in particle_root.get_children():
+            if child is GPUParticles3D:
+                _apply_particle_motion_state(child)

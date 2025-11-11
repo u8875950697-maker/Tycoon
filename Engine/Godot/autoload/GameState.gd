@@ -2,12 +2,14 @@ extends Node
 class_name GameState
 
 const SAVE_PATH := "user://save.json"
+const SETTINGS_PATH := "user://settings.json"
 
 var tree_definitions := {}
 var fruit_definitions := {}
 var world_definitions := {}
 var economy := {}
 var monetization := {}
+var settings := {}
 
 var currencies := {
     "coins": 0,
@@ -63,6 +65,7 @@ func _ready() -> void:
 func initialize() -> void:
     load_definitions()
     load_state()
+    load_settings()
     compute_offline_rewards()
 
 func load_definitions() -> void:
@@ -111,6 +114,15 @@ func reset_defaults() -> void:
     ad_reset_timestamp = last_session_timestamp
     session_buff_used = false
     session_buff_active = {}
+    reset_settings()
+
+func reset_settings() -> void:
+    settings = {
+        "mute_music": false,
+        "mute_sfx": false,
+        "high_contrast": false,
+        "reduce_motion": false
+    }
 
 func load_state() -> void:
     reset_defaults()
@@ -140,6 +152,18 @@ func load_state() -> void:
     last_ad_timestamp = int(data.get("last_ad_timestamp", ad_reset_timestamp))
     offline_double_timestamp = int(data.get("offline_double_timestamp", 0))
 
+func load_settings() -> void:
+    reset_settings()
+    if not FileAccess.file_exists(SETTINGS_PATH):
+        return
+    var file := FileAccess.open(SETTINGS_PATH, FileAccess.READ)
+    if file == null:
+        return
+    var text := file.get_as_text()
+    var data := JSON.parse_string(text)
+    if typeof(data) == TYPE_DICTIONARY:
+        settings.merge(data, true)
+
 func save_state() -> void:
     var data := {
         "currencies": currencies,
@@ -162,6 +186,24 @@ func save_state() -> void:
     var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
     if file:
         file.store_string(JSON.stringify(data))
+
+func save_settings() -> void:
+    var file := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
+    if file == null:
+        return
+    file.store_string(JSON.stringify(settings))
+
+func set_setting(key: String, value) -> void:
+    settings[key] = value
+    save_settings()
+
+func get_setting(key: String, default_value = null):
+    if settings.has(key):
+        return settings[key]
+    return default_value
+
+func get_all_settings() -> Dictionary:
+    return settings.duplicate()
 
 func get_tree_data(id: String) -> Dictionary:
     return tree_definitions.get(id, {})

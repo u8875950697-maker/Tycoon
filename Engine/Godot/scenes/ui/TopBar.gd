@@ -111,3 +111,19 @@ func set_hazard_summary(text: String) -> void:
 
 func set_buff_button_tooltip(text: String) -> void:
     buff_button.tooltip_text = text
+
+func apply_high_contrast(enabled: bool) -> void:
+    var panel := $Panel
+    if enabled:
+        panel.self_modulate = Color(0.18, 0.18, 0.18, 0.96)
+        self_modulate = Color(1.15, 1.15, 1.15, 1)
+        for label in _collect_labels():
+            label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+    else:
+        panel.self_modulate = Color(1, 1, 1, 1)
+        self_modulate = Color(1, 1, 1, 1)
+        for label in _collect_labels():
+            label.remove_theme_color_override("font_color")
+
+func _collect_labels() -> Array[Label]:
+    return [world_label, hazard_label, buff_status_label, coins_label, mana_label, essence_label, gems_label, seeds_label, timer_label, buff_label]
