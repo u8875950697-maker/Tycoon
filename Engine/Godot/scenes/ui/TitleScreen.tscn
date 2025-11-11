@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3 uid="uid://title_screen_ok"]
+
+[ext_resource type="Script" path="res://Engine/Godot/scripts/ui/TitleScreen.gd" id="1"]
+
+[node name="TitleScreen" type="CanvasLayer"]
+
+[node name="BG" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.62,0.82,0.72,1)
+
+[node name="VBox" type="VBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200
+offset_top = -140
+offset_right = 200
+offset_bottom = 140
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="VBox"]
+text = "Evergrove Tycoon"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 38
+
+[node name="Buttons" type="VBoxContainer" parent="VBox"]
+theme_override_constants/separation = 10
+
+[node name="PlayButton" type="Button" parent="VBox/Buttons"]
+text = "Play"
+
+[node name="OptionsButton" type="Button" parent="VBox/Buttons"]
+text = "Options"
+
+[node name="QuitButton" type="Button" parent="VBox/Buttons"]
+text = "End"
+
+[node name="Script" type="Node" parent="."]
+script = ExtResource("1")

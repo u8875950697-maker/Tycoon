@@ -1,0 +1,109 @@
+[gd_scene load_steps=5 format=3 uid="uid://treepanel"]
+
+[ext_resource type="Script" path="res://scenes/ui/TreePanel.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/icons/water.svg" id="2"]
+[ext_resource type="Texture2D" path="res://assets/icons/fertilizer.svg" id="3"]
+[ext_resource type="Texture2D" path="res://assets/icons/cure.svg" id="4"]
+
+[node name="TreePanel" type="Panel"]
+script = ExtResource("1")
+anchors_preset = 7
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 0.3
+anchor_bottom = 1.0
+offset_top = -260.0
+offset_bottom = -12.0
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+
+[node name="Title" type="Label" parent="VBox"]
+text = "Tree"
+
+[node name="Ability" type="Label" parent="VBox"]
+text = "Ability: -"
+
+[node name="Stats" type="RichTextLabel" parent="VBox"]
+fit_content_height = true
+scroll_active = false
+text = "Select a tree to view stats"
+
+[node name="CareContainer" type="VBoxContainer" parent="VBox"]
+separation = 6
+
+[node name="WaterRow" type="HBoxContainer" parent="VBox/CareContainer"]
+separation = 6
+
+[node name="WaterIcon" type="TextureRect" parent="VBox/CareContainer/WaterRow"]
+texture = ExtResource("2")
+custom_minimum_size = Vector2(24, 24)
+expand = true
+stretch_mode = 4
+
+[node name="WaterButton" type="Button" parent="VBox/CareContainer/WaterRow"]
+text = "Water"
+size_flags_horizontal = 1
+
+[node name="WaterBar" type="ProgressBar" parent="VBox/CareContainer/WaterRow"]
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 1.0
+value = 0.0
+
+[node name="WaterTimer" type="Label" parent="VBox/CareContainer/WaterRow"]
+text = "0s"
+
+[node name="FertilizeRow" type="HBoxContainer" parent="VBox/CareContainer"]
+separation = 6
+
+[node name="FertilizeIcon" type="TextureRect" parent="VBox/CareContainer/FertilizeRow"]
+texture = ExtResource("3")
+custom_minimum_size = Vector2(24, 24)
+expand = true
+stretch_mode = 4
+
+[node name="FertilizeButton" type="Button" parent="VBox/CareContainer/FertilizeRow"]
+text = "Fertilize"
+size_flags_horizontal = 1
+
+[node name="FertilizeBar" type="ProgressBar" parent="VBox/CareContainer/FertilizeRow"]
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 1.0
+value = 0.0
+
+[node name="FertilizeTimer" type="Label" parent="VBox/CareContainer/FertilizeRow"]
+text = "0s"
+
+[node name="CureRow" type="HBoxContainer" parent="VBox/CareContainer"]
+separation = 6
+
+[node name="CureIcon" type="TextureRect" parent="VBox/CareContainer/CureRow"]
+texture = ExtResource("4")
+custom_minimum_size = Vector2(24, 24)
+expand = true
+stretch_mode = 4
+
+[node name="CureButton" type="Button" parent="VBox/CareContainer/CureRow"]
+text = "Cure"
+size_flags_horizontal = 1
+
+[node name="CureBar" type="ProgressBar" parent="VBox/CareContainer/CureRow"]
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 1.0
+value = 0.0
+
+[node name="CureStatus" type="Label" parent="VBox/CareContainer/CureRow"]
+text = "Healthy"
+
+[node name="RemoveButton" type="Button" parent="VBox"]
+text = "Remove Tree"

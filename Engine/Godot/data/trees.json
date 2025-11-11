@@ -1,0 +1,167 @@
+{
+  "wood_tree": {
+    "name": "Wood Tree",
+    "biome": "meadow",
+    "rarity": "basic",
+    "growth_time": 35,
+    "water_need": 0.6,
+    "fertilizer_need": 0.4,
+    "disease_chance": 0.02,
+    "ability": "aura",
+    "ability_value": 0.12,
+    "ability_detail": "Gentle growth aura boosts nearby trees",
+    "layers": [
+      {"texture": "res://assets/trees/trunk_base.svg", "position": [0.0, 0.5, 0.0], "scale": [1.0, 1.0, 1.0], "modulate": "#d48a54"},
+      {"texture": "res://assets/trees/canopy_round.svg", "position": [0.0, 1.5, -0.05], "scale": [1.0, 1.0, 1.0], "modulate": "#6fd88b"},
+      {"texture": "res://assets/trees/fruit_round.svg", "position": [0.2, 1.4, -0.1], "scale": [0.6, 0.6, 0.6], "modulate": "#f9b842"}
+    ],
+    "fruits": [
+      {"id": "wood_apple", "weight": 1.0}
+    ]
+  },
+  "water_birch": {
+    "name": "Water Birch",
+    "biome": "meadow",
+    "rarity": "basic",
+    "growth_time": 32,
+    "water_need": 0.4,
+    "fertilizer_need": 0.5,
+    "disease_chance": 0.018,
+    "ability": "auto_water",
+    "ability_value": 6.0,
+    "ability_detail": "Refreshes itself with stored dew",
+    "layers": [
+      {"texture": "res://assets/trees/trunk_base.svg", "position": [0.0, 0.4, 0.0], "scale": [0.9, 0.9, 0.9], "modulate": "#c4a885"},
+      {"texture": "res://assets/trees/canopy_round.svg", "position": [0.0, 1.6, -0.05], "scale": [0.9, 0.9, 0.9], "modulate": "#8fd4ff"},
+      {"texture": "res://assets/trees/fruit_round.svg", "position": [-0.2, 1.3, -0.1], "scale": [0.5, 0.5, 0.5], "modulate": "#7bd3ff"}
+    ],
+    "fruits": [
+      {"id": "dew_pearl", "weight": 1.0}
+    ]
+  },
+  "algae_tree": {
+    "name": "Algae Tree",
+    "biome": "swamp",
+    "rarity": "uncommon",
+    "growth_time": 40,
+    "water_need": 0.3,
+    "fertilizer_need": 0.6,
+    "disease_chance": 0.04,
+    "ability": "mana_gen",
+    "ability_value": 1.0,
+    "ability_detail": "Releases ambient mana spores",
+    "layers": [
+      {"texture": "res://assets/trees/trunk_base.svg", "position": [0.0, 0.45, 0.0], "scale": [1.0, 1.0, 1.0], "modulate": "#8f7c5b"},
+      {"texture": "res://assets/trees/canopy_round.svg", "position": [0.0, 1.7, -0.05], "scale": [1.1, 1.1, 1.1], "modulate": "#4fa069"},
+      {"texture": "res://assets/trees/fruit_round.svg", "position": [0.1, 1.2, -0.1], "scale": [0.5, 0.5, 0.5], "modulate": "#31c4af"}
+    ],
+    "fruits": [
+      {"id": "algae_pod", "weight": 1.0}
+    ]
+  },
+  "ash_tree": {
+    "name": "Ash Tree",
+    "biome": "volcano",
+    "rarity": "rare",
+    "growth_time": 45,
+    "water_need": 0.8,
+    "fertilizer_need": 0.6,
+    "disease_chance": 0.03,
+    "ability": "crit",
+    "ability_value": 0.2,
+    "ability_detail": "Fiery crit sparks double harvests",
+    "layers": [
+      {"texture": "res://assets/trees/trunk_base.svg", "position": [0.0, 0.45, 0.0], "scale": [1.0, 1.0, 1.0], "modulate": "#7b4f3a"},
+      {"texture": "res://assets/trees/canopy_flare.svg", "position": [0.0, 1.8, -0.05], "scale": [1.05, 1.05, 1.05], "modulate": "#ff8246"},
+      {"texture": "res://assets/trees/fruit_star.svg", "position": [0.2, 1.5, -0.12], "scale": [0.55, 0.55, 0.55], "modulate": "#ffe59b"}
+    ],
+    "fruits": [
+      {"id": "ember_fruit", "weight": 0.75},
+      {"id": "ember_core", "weight": 0.25}
+    ]
+  },
+  "frost_pine": {
+    "name": "Frost Pine",
+    "biome": "ice_coast",
+    "rarity": "rare",
+    "growth_time": 48,
+    "water_need": 0.7,
+    "fertilizer_need": 0.5,
+    "disease_chance": 0.025,
+    "ability": "auto_harvest",
+    "ability_value": 8.0,
+    "ability_detail": "Shakes fruit loose in bursts",
+    "layers": [
+      {"texture": "res://assets/trees/trunk_base.svg", "position": [0.0, 0.5, 0.0], "scale": [1.0, 1.0, 1.0], "modulate": "#8c6f58"},
+      {"texture": "res://assets/trees/canopy_tall.svg", "position": [0.0, 1.9, -0.05], "scale": [1.1, 1.1, 1.1], "modulate": "#9fd2ff"},
+      {"texture": "res://assets/trees/fruit_round.svg", "position": [0.15, 1.4, -0.1], "scale": [0.45, 0.45, 0.45], "modulate": "#d6f4ff"}
+    ],
+    "fruits": [
+      {"id": "frost_cone", "weight": 0.7},
+      {"id": "glimmer_berry", "weight": 0.3}
+    ]
+  },
+  "dream_willow": {
+    "name": "Dream Willow",
+    "biome": "dream_isles",
+    "rarity": "epic",
+    "growth_time": 42,
+    "water_need": 0.5,
+    "fertilizer_need": 0.7,
+    "disease_chance": 0.02,
+    "ability": "crit",
+    "ability_value": 0.25,
+    "ability_detail": "Dream crits shower extra coins",
+    "layers": [
+      {"texture": "res://assets/trees/trunk_base.svg", "position": [0.0, 0.45, 0.0], "scale": [0.95, 0.95, 0.95], "modulate": "#a07abf"},
+      {"texture": "res://assets/trees/canopy_flare.svg", "position": [0.0, 1.8, -0.05], "scale": [1.1, 1.1, 1.1], "modulate": "#c7a0ff"},
+      {"texture": "res://assets/trees/fruit_star.svg", "position": [-0.2, 1.5, -0.12], "scale": [0.5, 0.5, 0.5], "modulate": "#f2d6ff"}
+    ],
+    "fruits": [
+      {"id": "dream_petals", "weight": 1.0}
+    ]
+  },
+  "prism_lily": {
+    "name": "Prism Lily",
+    "biome": "dream_isles",
+    "rarity": "epic",
+    "growth_time": 44,
+    "water_need": 0.55,
+    "fertilizer_need": 0.6,
+    "disease_chance": 0.022,
+    "ability": "mana_gen",
+    "ability_value": 1.4,
+    "ability_detail": "Blooming mana sparks drip over time",
+    "layers": [
+      {"texture": "res://assets/trees/trunk_base.svg", "position": [0.0, 0.4, 0.0], "scale": [0.9, 0.9, 0.9], "modulate": "#b08fca"},
+      {"texture": "res://assets/trees/canopy_round.svg", "position": [0.0, 1.6, -0.05], "scale": [1.05, 1.05, 1.05], "modulate": "#d7b3ff"},
+      {"texture": "res://assets/trees/fruit_round.svg", "position": [0.2, 1.3, -0.1], "scale": [0.45, 0.45, 0.45], "modulate": "#ffbbf7"}
+    ],
+    "fruits": [
+      {"id": "prism_blossom", "weight": 0.8},
+      {"id": "prism_heart", "weight": 0.2}
+    ]
+  },
+  "astral_oak": {
+    "name": "Astral Oak",
+    "biome": "universal",
+    "rarity": "legendary",
+    "growth_time": 55,
+    "water_need": 0.7,
+    "fertilizer_need": 0.8,
+    "disease_chance": 0.018,
+    "ability": "aura",
+    "ability_value": 0.2,
+    "ability_detail": "Starlight aura increases rare fruit chance",
+    "layers": [
+      {"texture": "res://assets/trees/trunk_base.svg", "position": [0.0, 0.55, 0.0], "scale": [1.05, 1.05, 1.05], "modulate": "#906e8f"},
+      {"texture": "res://assets/trees/canopy_tall.svg", "position": [0.0, 1.9, -0.05], "scale": [1.15, 1.15, 1.15], "modulate": "#b68cf2"},
+      {"texture": "res://assets/trees/fruit_star.svg", "position": [0.15, 1.6, -0.12], "scale": [0.55, 0.55, 0.55], "modulate": "#ffe7a6"},
+      {"texture": "res://assets/trees/aura_glow.svg", "position": [0.0, 1.2, -0.2], "scale": [1.4, 1.4, 1.4], "modulate": "#ffe5ff"}
+    ],
+    "fruits": [
+      {"id": "astral_starfruit", "weight": 0.7},
+      {"id": "astral_shard", "weight": 0.3}
+    ]
+  }
+}
