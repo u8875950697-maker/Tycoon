@@ -63,18 +63,18 @@ modulate = Color(1, 1, 1, 0.9)
 
 [node name="UI" type="CanvasLayer" parent="."]
 
-[node name="TopBar" parent="UI" instance=ExtResource("3")]
+[node name="TopBar" parent="UI" instance=ExtResource("2")]
 
-[node name="TreePanel" parent="UI" instance=ExtResource("5")]
+[node name="TreePanel" parent="UI" instance=ExtResource("4")]
 
-[node name="PressPanel" parent="UI" instance=ExtResource("6")]
+[node name="PressPanel" parent="UI" instance=ExtResource("5")]
 
-[node name="BreedingPanel" parent="UI" instance=ExtResource("7")]
+[node name="BreedingPanel" parent="UI" instance=ExtResource("6")]
 
-[node name="PrestigePanel" parent="UI" instance=ExtResource("8")]
+[node name="PrestigePanel" parent="UI" instance=ExtResource("7")]
 
-[node name="WelcomeBack" parent="UI" instance=ExtResource("9")]
+[node name="WelcomeBack" parent="UI" instance=ExtResource("8")]
 
-[node name="RunSummary" parent="UI" instance=ExtResource("10")]
+[node name="RunSummary" parent="UI" instance=ExtResource("9")]
 
-[node name="WorldSelect" parent="." instance=ExtResource("11")]
+[node name="WorldSelect" parent="." instance=ExtResource("10")]

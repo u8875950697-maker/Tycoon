@@ -25,22 +25,29 @@ offset_right = -16.0
 offset_bottom = -8.0
 
 [node name="WorldLabel" type="Label" parent="Panel/HBox"]
+unique_name_in_owner = true
 text = "World: -"
 
 [node name="CoinsLabel" type="Label" parent="Panel/HBox"]
+unique_name_in_owner = true
 text = "Coins: 0"
 
 [node name="ManaLabel" type="Label" parent="Panel/HBox"]
+unique_name_in_owner = true
 text = "Mana: 0"
 
 [node name="EssenceLabel" type="Label" parent="Panel/HBox"]
+unique_name_in_owner = true
 text = "Essence: 0"
 
 [node name="GemsLabel" type="Label" parent="Panel/HBox"]
+unique_name_in_owner = true
 text = "Gems: 0"
 
 [node name="SeedsLabel" type="Label" parent="Panel/HBox"]
+unique_name_in_owner = true
 text = "Seeds: 0"
 
 [node name="TimerLabel" type="Label" parent="Panel/HBox"]
+unique_name_in_owner = true
 text = "Time: 0:00"
