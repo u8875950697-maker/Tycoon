@@ -1,0 +1,20 @@
+# System
+.DS_Store
+Thumbs.db
+
+# Builds and packages
+Builds/*
+!Builds/.gitkeep
+!Builds/Web/
+Builds/Web/*
+!Builds/Web/README.md
+*.zip
+*.tmp
+
+# Tools
+.vscode/
+.idea/
+
+# Python cache
+__pycache__/
+*.pyc

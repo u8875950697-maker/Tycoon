@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <radialGradient id="starGradient" cx="0.5" cy="0.4" r="0.65">
+      <stop offset="0%" stop-color="#fff4cc"/>
+      <stop offset="100%" stop-color="#f3c94c"/>
+    </radialGradient>
+  </defs>
+  <path d="M64 10 L76 46 L114 46 L82 70 L94 110 L64 86 L34 110 L46 70 L14 46 L52 46 Z" fill="url(#starGradient)" stroke="#c2982f" stroke-width="6" stroke-linejoin="round"/>
+</svg>
