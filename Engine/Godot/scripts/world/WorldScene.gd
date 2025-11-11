@@ -1,0 +1,652 @@
+extends Node3D
+class_name WorldSceneController
+
+const TREE_SCENE := preload("res://scenes/Tree.tscn")
+const PLOT_SCENE := preload("res://scenes/Plot.tscn")
+
+@onready var plots_root: Node3D = $GridRoot/Plots
+@onready var top_bar: TopBar = $UI/TopBar
+@onready var tree_panel: TreePanel = $UI/TreePanel
+@onready var press_panel: PressPanel = $UI/PressPanel
+@onready var breeding_panel: BreedingPanel = $UI/BreedingPanel
+@onready var prestige_panel: PrestigePanel = $UI/PrestigePanel
+@onready var welcome_popup: WelcomeBackPopup = $UI/WelcomeBack
+@onready var run_summary: RunSummaryPopup = $UI/RunSummary
+@onready var world_select: WorldSelect = $WorldSelect
+@onready var parallax_root: Node3D = $ParallaxRoot
+@onready var world_camera: Camera3D = $Camera
+@onready var background_sprite: Sprite3D = $ParallaxRoot/Background
+@onready var foreground_sprite: Sprite3D = $ParallaxRoot/Foreground
+@onready var midground_sprite: Sprite3D = $ParallaxRoot/Midground
+@onready var sky_sprite: Sprite3D = $ParallaxRoot/Sky
+@onready var ground_sprite: Sprite3D = $GridRoot/Ground
+@onready var decal_root: Node3D = $GridRoot/Decals
+@onready var particle_root: Node3D = $Particles
+@onready var vignette_rect: TextureRect = $UI/Vignette
+
+var plots: Array = []
+var selected_plot: PlotTile = null
+var selected_tree: TreeActor = null
+var plant_menu := PopupMenu.new()
+var active_buffs := {
+    "growth": [],
+    "harvest": [],
+    "drop": []
+}
+var last_currency_update := 0.0
+var rng := RandomNumberGenerator.new()
+var world_effects := {}
+var parallax_bases := {}
+var parallax_time := 0.0
+var care_refresh_timer := 0.0
+var world_buff_info := {}
+var world_buff_used := false
+var reduce_motion_enabled := false
+var particle_default_settings := {}
+
+func _add_buff(kind: String, duration: float, multiplier: float, source: String) -> void:
+    if not active_buffs.has(kind):
+        active_buffs[kind] = []
+    active_buffs[kind].append({
+        "time": max(0.0, duration),
+        "mult": max(0.0, multiplier),
+        "source": source
+    })
+
+func _get_buff_multiplier(kind: String) -> float:
+    if not active_buffs.has(kind):
+        return 1.0
+    var total := 1.0
+    for entry in active_buffs[kind]:
+        total *= max(0.0, float(entry.get("mult", 1.0)))
+    return max(0.0, total)
+
+func _prune_buffs(delta: float) -> void:
+    for key in active_buffs.keys():
+        var list: Array = active_buffs[key]
+        var remaining: Array = []
+        for entry in list:
+            var time_left := float(entry.get("time", 0.0)) - delta
+            if time_left > 0.0:
+                entry["time"] = time_left
+                remaining.append(entry)
+        active_buffs[key] = remaining
+
+func _build_buff_summary() -> Dictionary:
+    var items: Array[String] = []
+    var preview := {}
+    for key in ["growth", "harvest", "drop", "water", "mana"]:
+        var list: Array = active_buffs.get(key, [])
+        if list.is_empty():
+            continue
+        var first := list[0]
+        var label := key.capitalize()
+        if key == "water":
+            label = "Water"
+        elif key == "mana":
+            label = "Mana"
+        items.append("%s x%.2f" % [label, _get_buff_multiplier(key)])
+        if preview.is_empty():
+            preview = {
+                "label": label,
+                "mult": _get_buff_multiplier(key),
+                "time": float(first.get("time", 0.0)),
+                "source": str(first.get("source", ""))
+            }
+    return {
+        "text": ", ".join(items),
+        "preview": preview
+    }
+
+func _ready() -> void:
+    GameState.initialize()
+    rng.randomize()
+    _update_world_effects()
+    _apply_world_visuals()
+    if parallax_root:
+        parallax_bases.clear()
+        for child in parallax_root.get_children():
+            parallax_bases[child.name] = child.position
+    if background_sprite and background_sprite.texture == null and sky_sprite:
+        background_sprite.texture = sky_sprite.texture
+    $UI.add_child(plant_menu)
+    plant_menu.id_pressed.connect(_on_plant_selected)
+    _register_ui()
+    _configure_press_recipes()
+    _build_grid()
+    _restore_saved_trees()
+    UIManager.show_tree_details(null, {})
+    _refresh_top_bar()
+    _refresh_press_panel()
+    _refresh_breeding_panel()
+    _refresh_prestige_panel()
+    _refresh_world_info()
+    _configure_world_buff()
+    if GameState.has_offline_rewards():
+        UIManager.show_welcome_back(
+            GameState.offline_result.get("summary", ""),
+            GameState.offline_result,
+            GameState.can_use_offline_double_ad(),
+            GameState.monetization.get("offline_double_gems", true) and GameState.can_use_offline_double()
+        )
+    UIManager.show_world_select(WorldController.get_worlds())
+    world_select.world_chosen.connect(_on_world_chosen)
+    welcome_popup.collect.connect(_on_welcome_collect)
+    tree_panel.care_requested.connect(_on_care_requested)
+    tree_panel.remove_requested.connect(_on_remove_requested)
+    press_panel.craft_requested.connect(_on_craft_requested)
+    press_panel.dev_cheats_toggled.connect(_on_dev_toggle)
+    breeding_panel.breed_requested.connect(_on_breed_requested)
+    prestige_panel.prestige_requested.connect(_on_prestige_requested)
+    prestige_panel.upgrade_requested.connect(_on_upgrade_requested)
+    run_summary.continue_requested.connect(_on_continue_requested)
+    run_summary.prestige_requested.connect(_on_prestige_requested)
+    set_process(true)
+
+func _register_ui() -> void:
+    UIManager.register_top_bar(top_bar)
+    if top_bar:
+        top_bar.world_buff_requested.connect(_on_world_buff_requested)
+    UIManager.register_tree_panel(tree_panel)
+    UIManager.register_press_panel(press_panel)
+    UIManager.register_breeding_panel(breeding_panel)
+    UIManager.register_prestige_panel(prestige_panel)
+    UIManager.register_welcome_popup(welcome_popup)
+    UIManager.register_run_summary(run_summary)
+    UIManager.register_world_select(world_select)
+    UIManager.register_world_scene(self)
+    UIManager.apply_high_contrast(GameState.get_setting("high_contrast", false))
+    UIManager.apply_reduce_motion(GameState.get_setting("reduce_motion", false))
+    UIManager.configure_dev_toggle(GameState.monetization.get("dev_cheats", false), false)
+    world_select.visible = true
+
+func _build_grid() -> void:
+    for child in plots_root.get_children():
+        child.queue_free()
+    plots.clear()
+    var grid := WorldController.get_grid_size()
+    var spacing := 2.4
+    var index := 0
+    for y in range(grid.y):
+        for x in range(grid.x):
+            var plot: PlotTile = PLOT_SCENE.instantiate()
+            plot.index = index
+            plot.position = Vector3((x - (grid.x / 2.0) + 0.5) * spacing, 0, (y - (grid.y / 2.0) + 0.5) * spacing)
+            plot.plot_selected.connect(_on_plot_selected)
+            plot.unlock_requested.connect(_on_unlock_requested)
+            plot.set_price(WorldController.get_slot_cost(index))
+            plots_root.add_child(plot)
+            plots.append(plot)
+            index += 1
+
+func _restore_saved_trees() -> void:
+    for plot in plots:
+        plot.remove_tree()
+        plot.set_price(WorldController.get_slot_cost(plot.index))
+        var unlocked := GameState.is_slot_unlocked(GameState.current_world_id, plot.index)
+        var base_slots := WorldController.get_base_slots(GameState.current_world_id)
+        if plot.index < base_slots:
+            unlocked = true
+            GameState.unlock_slot(GameState.current_world_id, plot.index)
+        plot.set_unlocked(unlocked)
+        if unlocked:
+            var tree_id := GameState.get_slot_tree(GameState.current_world_id, plot.index)
+            if tree_id != "":
+                _spawn_tree_on_plot(plot, tree_id)
+
+func _spawn_tree_on_plot(plot: PlotTile, tree_id: String) -> void:
+    var tree_data := GameState.get_tree_data(tree_id)
+    if tree_data.is_empty():
+        return
+    plot.remove_tree()
+    var tree: TreeActor = TREE_SCENE.instantiate()
+    tree.setup(tree_id, tree_data, Economy.get_fruit_spawn_interval(), world_effects)
+    tree.harvested.connect(_on_tree_harvested)
+    tree.selected.connect(_on_tree_selected)
+    plot.attach_tree(tree)
+    WorldController.apply_world_bonuses(tree)
+
+func _refresh_top_bar() -> void:
+    UIManager.update_currencies(GameState.currencies)
+
+func _refresh_world_info() -> void:
+    var world_info := GameState.get_world_data(GameState.current_world_id)
+    world_effects = world_info.get("effects", {})
+    var name := str(world_info.get("display_name", GameState.current_world_id.capitalize()))
+    UIManager.update_world_status(name, GameState.get_world_hazard(GameState.current_world_id))
+    _apply_world_visuals()
+    _configure_world_buff()
+
+func _update_world_effects() -> void:
+    var world_info := GameState.get_world_data(GameState.current_world_id)
+    world_effects = world_info.get("effects", {})
+
+func _configure_world_buff() -> void:
+    world_buff_info = GameState.get_world_buff(GameState.current_world_id).duplicate(true)
+    if world_buff_info.is_empty():
+        UIManager.configure_world_buff({}, false, "Unavailable", "No world buff available in this world yet.")
+        return
+    var available := GameState.can_use_world_buff(GameState.current_world_id)
+    var tooltip := world_buff_info.get("description", "Optional boost")
+    var status_text := available ? "Ready — %s" % tooltip : "Used this run"
+    UIManager.configure_world_buff(world_buff_info, available, status_text, tooltip)
+
+func _configure_press_recipes() -> void:
+    if press_panel == null:
+        return
+    var recipes := {
+        "growth": Economy.get_press_recipe("growth"),
+        "harvest": Economy.get_press_recipe("harvest"),
+        "drop": Economy.get_press_recipe("drop")
+    }
+    press_panel.configure_recipes(recipes)
+
+func _apply_world_visuals() -> void:
+    var visuals := GameState.get_world_data(GameState.current_world_id).get("visuals", {})
+    var sky_color := Color(visuals.get("sky_color", "#ffffff"))
+    if background_sprite:
+        background_sprite.modulate = sky_color
+    if sky_sprite:
+        sky_sprite.modulate = sky_color
+    if midground_sprite:
+        midground_sprite.modulate = Color(visuals.get("mid_color", "#ffffff"))
+    if foreground_sprite:
+        foreground_sprite.modulate = Color(visuals.get("foreground_color", "#ffffff"))
+    if ground_sprite:
+        ground_sprite.modulate = Color(visuals.get("ground_color", "#ffffff"))
+    _populate_decals(visuals.get("decals", []))
+    _configure_particles(visuals.get("particles", {}))
+    _configure_vignette(Color(visuals.get("vignette_color", "#ffffff")))
+
+func _populate_decals(decals: Array) -> void:
+    if decal_root == null:
+        return
+    for child in decal_root.get_children():
+        child.queue_free()
+    for entry in decals:
+        var sprite := Sprite3D.new()
+        sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+        var tex_path := str(entry.get("texture", ""))
+        if tex_path != "" and ResourceLoader.exists(tex_path):
+            sprite.texture = load(tex_path)
+        var pos := entry.get("position", [0, 0, 0])
+        if pos is Array and pos.size() >= 3:
+            sprite.position = Vector3(float(pos[0]), float(pos[1]), float(pos[2]))
+        var scale := entry.get("scale", [1, 1, 1])
+        if scale is Array and scale.size() >= 3:
+            sprite.scale = Vector3(float(scale[0]), float(scale[1]), float(scale[2]))
+        sprite.modulate = Color(entry.get("color", "#ffffff"))
+        decal_root.add_child(sprite)
+
+func _configure_particles(data: Dictionary) -> void:
+    if particle_root == null:
+        return
+    for child in particle_root.get_children():
+        child.queue_free()
+    particle_default_settings.clear()
+    if data.is_empty():
+        return
+    var particles := GPUParticles3D.new()
+    particles.amount = int(data.get("amount", 48))
+    particles.lifetime = float(data.get("lifetime", 5.0))
+    particles.preprocess = particles.lifetime
+    particles.one_shot = false
+    particles.emitting = true
+    particles.local_coords = false
+    var material := ParticleProcessMaterial.new()
+    var gravity := data.get("gravity", [0, -0.2, 0])
+    if gravity is Array and gravity.size() >= 3:
+        material.gravity = Vector3(float(gravity[0]), float(gravity[1]), float(gravity[2]))
+    material.initial_velocity = float(data.get("speed", 0.3))
+    material.initial_velocity_random = 0.35
+    material.spread = clamp(float(data.get("spread", 0.4)) * 90.0, 0.0, 180.0)
+    var scale_value := float(data.get("scale", 0.5))
+    material.scale = Vector3.ONE * scale_value
+    material.scale_random = 0.3
+    particles.process_material = material
+    var mesh := QuadMesh.new()
+    mesh.size = Vector2(scale_value * 1.4, scale_value * 1.4)
+    var mat := StandardMaterial3D.new()
+    mat.albedo_color = Color(data.get("color", "#ffffff"))
+    var tex_path := str(data.get("texture", ""))
+    if tex_path != "" and ResourceLoader.exists(tex_path):
+        mat.albedo_texture = load(tex_path)
+    mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLE
+    mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+    mesh.material = mat
+    particles.draw_pass_1 = mesh
+    particle_root.add_child(particles)
+    particle_default_settings = {
+        "amount": particles.amount,
+        "speed_scale": particles.speed_scale
+    }
+    _apply_particle_motion_state(particles)
+
+func _apply_particle_motion_state(particles: GPUParticles3D) -> void:
+    if particles == null:
+        return
+    var base_amount := int(particle_default_settings.get("amount", particles.amount))
+    var base_speed := float(particle_default_settings.get("speed_scale", particles.speed_scale))
+    if reduce_motion_enabled:
+        particles.amount = max(1, int(round(base_amount * 0.35)))
+        particles.speed_scale = max(0.2, base_speed * 0.5)
+    else:
+        particles.amount = max(1, base_amount)
+        particles.speed_scale = max(0.01, base_speed)
+
+func _configure_vignette(color: Color) -> void:
+    if vignette_rect == null:
+        return
+    var tint := color
+    tint.a = clamp(tint.a, 0.2, 0.6)
+    vignette_rect.modulate = tint
+
+func _on_plot_selected(plot: PlotTile) -> void:
+    _select_plot(plot)
+    if plot.tree:
+        var data := GameState.get_tree_data(plot.tree.tree_id)
+        UIManager.show_tree_details(plot.tree, data)
+    else:
+        UIManager.show_tree_details(null, {})
+        _open_plant_menu(plot)
+
+func _on_tree_selected(tree: TreeActor) -> void:
+    for plot in plots:
+        if plot.tree:
+            plot.tree.set_selected(plot.tree == tree)
+            if plot.tree == tree:
+                selected_plot = plot
+    selected_tree = tree
+    var data := GameState.get_tree_data(tree.tree_id)
+    UIManager.show_tree_details(tree, data)
+
+func _select_plot(plot: PlotTile) -> void:
+    selected_plot = plot
+    if plot.tree:
+        selected_tree = plot.tree
+        plot.tree.set_selected(true)
+    for other in plots:
+        if other != plot and other.tree:
+            other.tree.set_selected(false)
+
+func _open_plant_menu(plot: PlotTile) -> void:
+    plant_menu.clear()
+    var tree_ids := WorldController.get_available_tree_ids(GameState.current_world_id)
+    var id := 0
+    for tree_id in tree_ids:
+        plant_menu.add_item(tree_id.capitalize(), id)
+        plant_menu.set_item_metadata(id, tree_id)
+        id += 1
+    plant_menu.set_position(get_viewport().get_mouse_position())
+    plant_menu.show()
+    plant_menu.popup()
+
+func _on_plant_selected(index: int) -> void:
+    if selected_plot == null:
+        return
+    var tree_id := plant_menu.get_item_metadata(index)
+    GameState.set_tree_in_slot(GameState.current_world_id, selected_plot.index, tree_id)
+    _spawn_tree_on_plot(selected_plot, tree_id)
+    _refresh_top_bar()
+    GameState.save_state()
+
+func _on_unlock_requested(plot: PlotTile) -> void:
+    var cost := WorldController.get_slot_cost(plot.index)
+    if GameState.spend_currency("coins", cost):
+        GameState.unlock_slot(GameState.current_world_id, plot.index)
+        plot.set_unlocked(true)
+        _refresh_top_bar()
+        GameState.save_state()
+        return
+    if GameState.monetization.get("slot_token_ads", true) and GameState.can_use_ad():
+        GameState.consume_ad_view()
+        GameState.unlock_slot(GameState.current_world_id, plot.index)
+        plot.set_unlocked(true)
+        _refresh_top_bar()
+        GameState.save_state()
+
+func _on_tree_harvested(fruit_id: String, tree: TreeActor) -> void:
+    var fruit := GameState.record_harvest(fruit_id)
+    if fruit.is_empty():
+        return
+    var tree_info := GameState.get_tree_data(tree.tree_id)
+    var ability := str(tree_info.get("ability", ""))
+    var ability_value := float(tree_info.get("ability_value", 0.0))
+    var crit_bonus := float(world_effects.get("crit_bonus", 0.0))
+    if ability == "crit":
+        var crit_chance := clamp(ability_value + crit_bonus, 0.0, 0.95)
+        if rng.randf() < crit_chance:
+            GameState.add_currency("coins", int(fruit.get("coins", 0)))
+            GameState.add_currency("mana", int(round(fruit.get("mana", 0) * 0.5)))
+            GameState.add_currency("essence", int(round(fruit.get("essence", 0) * 0.5)))
+    var harvest_mult := _get_buff_multiplier("harvest")
+    if harvest_mult > 1.01:
+        var bonus := int(round(fruit.get("coins", 0) * max(0.0, harvest_mult - 1.0)))
+        if bonus > 0:
+            GameState.add_currency("coins", bonus)
+    var drop_mult := _get_buff_multiplier("drop")
+    var drop_chance := min(0.6, 0.12 + 0.1 * drop_mult + float(world_effects.get("rare_drop_bonus", 0.0)))
+    if rng.randf() < drop_chance:
+        GameState.record_harvest(fruit_id)
+    var rare_bonus := float(world_effects.get("rare_drop_bonus", 0.0))
+    var rarity := str(fruit.get("rarity", ""))
+    if rare_bonus > 0.0 and ["rare", "epic", "legendary", "mythic"].has(rarity):
+        if rng.randf() < rare_bonus:
+            GameState.record_harvest(fruit_id)
+    var mana_mult := _get_buff_multiplier("mana")
+    if mana_mult > 1.01:
+        var mana_bonus := int(round(fruit.get("mana", 0) * max(0.0, mana_mult - 1.0)))
+        if mana_bonus > 0:
+            GameState.add_currency("mana", mana_bonus)
+    _refresh_top_bar()
+
+func _on_care_requested(care_type: String) -> void:
+    if selected_tree == null:
+        return
+    var duration := Economy.get_care_duration()
+    var water_multiplier := float(world_effects.get("water_cost_multiplier", 1.0))
+    match care_type:
+        "water":
+            var cost := int(round(Economy.get_care_cost("water") * water_multiplier))
+            cost = max(1, int(round(cost * _get_buff_multiplier("water"))))
+            if GameState.spend_currency("coins", max(0, cost)):
+                selected_tree.apply_care("water", duration)
+        "fertilize":
+            if GameState.spend_currency("coins", Economy.get_care_cost("fertilize")):
+                selected_tree.apply_care("fertilize", duration)
+        "cure":
+            if GameState.spend_currency("coins", Economy.get_care_cost("cure")):
+                selected_tree.apply_care("cure", duration)
+    _refresh_top_bar()
+
+func _on_remove_requested() -> void:
+    if selected_plot == null:
+        return
+    GameState.remove_tree_from_slot(GameState.current_world_id, selected_plot.index)
+    selected_plot.remove_tree()
+    selected_tree = null
+    UIManager.show_tree_details(null, {})
+    GameState.save_state()
+
+func _on_craft_requested(kind: String) -> void:
+    var recipe := Economy.get_press_recipe(kind)
+    if recipe.is_empty():
+        return
+    var cost_currency := recipe.get("currency", "coins")
+    var cost_amount := int(recipe.get("cost", 0))
+    if cost_amount > 0 and not GameState.spend_currency(cost_currency, cost_amount):
+        return
+    _add_buff(kind, float(recipe.get("duration", 0.0)), float(recipe.get("multiplier", 1.0)), str(recipe.get("label", kind)))
+    _refresh_top_bar()
+    _refresh_press_panel()
+
+func _refresh_press_panel() -> void:
+    var info := _build_buff_summary()
+    var text := info.get("text", "")
+    if text == "":
+        text = "No active buffs"
+    UIManager.update_press_status(text)
+    UIManager.update_buff_badge(info.get("preview", {}))
+
+func _on_world_buff_requested() -> void:
+    if world_buff_info.is_empty():
+        return
+    var info := GameState.consume_world_buff(GameState.current_world_id)
+    if info.is_empty():
+        _configure_world_buff()
+        return
+    var kind := str(info.get("type", "growth"))
+    var duration := float(info.get("duration", 60.0))
+    var multiplier := float(info.get("multiplier", 1.0))
+    var label := info.get("name", kind.capitalize())
+    match kind:
+        "growth", "harvest", "drop", "water", "mana":
+            _add_buff(kind, duration, multiplier, label)
+        _:
+            _add_buff("growth", duration, multiplier, label)
+    _configure_world_buff()
+    _refresh_press_panel()
+
+func _on_dev_toggle(enabled: bool) -> void:
+    if not GameState.monetization.get("dev_cheats", false):
+        return
+    if enabled:
+        GameState.add_currency("coins", 500)
+        GameState.add_currency("mana", 100)
+        GameState.add_currency("essence", 50)
+    _refresh_top_bar()
+
+func _on_breed_requested(parent_a: String, parent_b: String) -> void:
+    var result := GameState.perform_breeding(parent_a, parent_b, GameState.current_world_id)
+    if result.has("error"):
+        breeding_panel.set_result("Result: %s" % result.get("error"))
+    else:
+        breeding_panel.set_result("Seed: %s (Tier %d)%s" % [result.get("seed_id", "?"), result.get("rarity_tier", 0), "*" if result.get("mutation", false) else ""])
+    _refresh_top_bar()
+    _refresh_breeding_panel()
+
+func _refresh_breeding_panel() -> void:
+    GameState.reset_breeding_if_needed()
+    var info := GameState.get_breeding_data()
+    var tree_ids := WorldController.get_available_tree_ids(GameState.current_world_id)
+    breeding_panel.set_tree_options(tree_ids)
+    var locked := info.get("locked", false)
+    breeding_panel.set_locked(locked, "Unlock breeding in World 2 onwards")
+    if locked:
+        breeding_panel.set_attempts_remaining(0, info.get("cooldown_text", ""))
+        breeding_panel.set_odds_text("Locked")
+        breeding_panel.set_result("Result: Unlock a later world")
+        return
+    breeding_panel.set_attempts_remaining(info.get("attempts", 0), info.get("cooldown_text", ""))
+    breeding_panel.set_odds_text("Mutation 10% (+5% native biome)")
+
+func _refresh_prestige_panel() -> void:
+    UIManager.configure_prestige(GameState.currencies.get("prestige_leaves", 0), GameState.prestige_upgrades, {})
+
+func _on_prestige_requested() -> void:
+    var total_value := GameState.currencies.get("coins", 0) + GameState.currencies.get("mana", 0) * 5 + GameState.currencies.get("essence", 0) * 12
+    var earned := GameState.apply_prestige(total_value)
+    run_summary.hide()
+    _refresh_top_bar()
+    _refresh_prestige_panel()
+    GameState.start_session(GameState.current_world_id, GameState.current_session_length)
+
+func _on_upgrade_requested(upgrade_id: String) -> void:
+    if GameState.purchase_prestige_upgrade(upgrade_id):
+        _refresh_prestige_panel()
+        _refresh_top_bar()
+
+func _on_welcome_collect(mode: String) -> void:
+    GameState.collect_offline(mode)
+    _refresh_top_bar()
+    GameState.save_state()
+
+func _on_world_chosen(world_id: String, duration: int) -> void:
+    WorldController.load_world(world_id)
+    GameState.start_session(world_id, duration)
+    GameState.current_world_id = world_id
+    _update_world_effects()
+    for key in active_buffs.keys():
+        active_buffs[key] = []
+    _restore_saved_trees()
+    UIManager.hide_world_select()
+    selected_plot = null
+    selected_tree = null
+    UIManager.show_tree_details(null, {})
+    _refresh_breeding_panel()
+    _refresh_prestige_panel()
+    _refresh_top_bar()
+    _refresh_world_info()
+    _refresh_press_panel()
+    GameState.save_state()
+
+func _on_continue_requested() -> void:
+    GameState.start_session(GameState.current_world_id, GameState.current_session_length)
+    GameState.save_state()
+    _refresh_world_info()
+
+func _process(delta: float) -> void:
+    GameState.update_session(delta)
+    last_currency_update += delta
+    if last_currency_update > 0.5:
+        _refresh_top_bar()
+        last_currency_update = 0.0
+    var remaining := max(0.0, GameState.current_session_length - GameState.session_elapsed)
+    top_bar.set_timer(remaining)
+    var growth_mult := _get_buff_multiplier("growth")
+    for plot in plots:
+        if plot.tree:
+            plot.tree.set_external_growth(growth_mult)
+    _prune_buffs(delta)
+    care_refresh_timer += delta
+    if care_refresh_timer >= 0.25:
+        if selected_tree:
+            tree_panel.update_timers(selected_tree.get_care_status(Economy.get_care_duration()))
+        else:
+            tree_panel.update_timers({})
+        care_refresh_timer = 0.0
+    if GameState.should_end_session():
+        if not run_summary.visible:
+            _show_run_summary()
+        return
+    _update_parallax(delta)
+    _refresh_press_panel()
+
+func _show_run_summary() -> void:
+    var summary := "Coins: %d\nMana: %d\nEssence: %d" % [GameState.currencies.get("coins", 0), GameState.currencies.get("mana", 0), GameState.currencies.get("essence", 0)]
+    UIManager.show_run_summary(summary)
+
+func _update_parallax(delta: float) -> void:
+    if parallax_root == null or parallax_bases.is_empty():
+        return
+    parallax_time = fmod(parallax_time + delta * 0.6, TAU)
+    var wave := reduce_motion_enabled ? 0.0 : sin(parallax_time) * 0.5
+    var camera_offset := 0.0
+    if world_camera:
+        camera_offset = clamp(world_camera.global_position.x * 0.05, -0.6, 0.6)
+    for child in parallax_root.get_children():
+        if not parallax_bases.has(child.name):
+            continue
+        var base_pos := parallax_bases[child.name]
+        var weight := 0.15
+        match child.name:
+            "Background":
+                weight = 0.05
+            "Foreground":
+                weight = 0.45
+            "Midground":
+                weight = 0.25
+            "Sky":
+                weight = 0.1
+        child.position.x = base_pos.x + wave * weight + camera_offset * weight
+
+func apply_reduce_motion(enabled: bool) -> void:
+    reduce_motion_enabled = enabled
+    if parallax_root and reduce_motion_enabled:
+        for child in parallax_root.get_children():
+            if parallax_bases.has(child.name):
+                child.position = parallax_bases[child.name]
+    if particle_root:
+        for child in particle_root.get_children():
+            if child is GPUParticles3D:
+                _apply_particle_motion_state(child)
