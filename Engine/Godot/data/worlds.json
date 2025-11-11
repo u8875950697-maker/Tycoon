@@ -1,0 +1,57 @@
+{
+  "meadow": {
+    "display_name": "Meadow",
+    "tier": "early",
+    "offline_cap_hours": 4,
+    "session_lengths": [5, 10, 20],
+    "base_slots": 3,
+    "native_trees": ["wood_tree", "water_birch"],
+    "hazard": "Low disease chance, gentle winds",
+    "buff": "+15% growth rate",
+    "goal": {"type": "harvest", "target": 60, "fruit": "wood_apple"}
+  },
+  "swamp": {
+    "display_name": "Sunkissed Swamp",
+    "tier": "early",
+    "offline_cap_hours": 4,
+    "session_lengths": [5, 10, 20],
+    "base_slots": 3,
+    "native_trees": ["algae_tree", "water_birch"],
+    "hazard": "Higher disease chance",
+    "buff": "Water costs halved",
+    "goal": {"type": "craft", "target": 1, "item": "swamp_elixir"}
+  },
+  "volcano": {
+    "display_name": "Volcano Ridge",
+    "tier": "mid",
+    "offline_cap_hours": 6,
+    "session_lengths": [5, 10, 20],
+    "base_slots": 4,
+    "native_trees": ["ash_tree"],
+    "hazard": "Heat surges increase water use",
+    "buff": "+20% rare fruit chance",
+    "goal": {"type": "harvest", "target": 30, "rarity": "rare"}
+  },
+  "ice_coast": {
+    "display_name": "Ice Coast",
+    "tier": "mid",
+    "offline_cap_hours": 6,
+    "session_lengths": [5, 10, 20],
+    "base_slots": 4,
+    "native_trees": ["frost_pine"],
+    "hazard": "Slower growth",
+    "buff": "Double rare fruit drop chance",
+    "goal": {"type": "craft", "target": 1, "item": "frost_elixir"}
+  },
+  "dream_isles": {
+    "display_name": "Dream Isles",
+    "tier": "late",
+    "offline_cap_hours": 8,
+    "session_lengths": [10, 20],
+    "base_slots": 5,
+    "native_trees": ["dream_willow", "prism_lily"],
+    "hazard": "Mana storms randomize timers",
+    "buff": "+25% crit harvest chance",
+    "goal": {"type": "harvest", "target": 20, "rarity": "epic"}
+  }
+}

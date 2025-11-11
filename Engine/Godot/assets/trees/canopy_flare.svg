@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="210" viewBox="0 0 240 210">
+  <defs>
+    <radialGradient id="emberGradient" cx="0.5" cy="0.3" r="0.7">
+      <stop offset="0%" stop-color="#ffd26f"/>
+      <stop offset="100%" stop-color="#e4502a"/>
+    </radialGradient>
+    <pattern id="emberPattern" patternUnits="userSpaceOnUse" width="26" height="26">
+      <rect width="26" height="26" fill="url(#emberGradient)"/>
+      <circle cx="6" cy="8" r="3" fill="#ffe7a3" opacity="0.5"/>
+      <circle cx="18" cy="14" r="2.5" fill="#b8341c" opacity="0.45"/>
+      <path d="M2 24 L24 2" stroke="#ff8b4c" stroke-width="1.5" opacity="0.3"/>
+    </pattern>
+  </defs>
+  <path d="M32 140 Q0 68 48 22 Q106 -16 176 18 Q236 54 220 130 Q190 206 110 204 Q54 202 32 140 Z" fill="url(#emberPattern)" stroke="#aa3118" stroke-width="6" stroke-linejoin="round"/>
+</svg>
