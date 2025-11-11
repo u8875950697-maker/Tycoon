@@ -4,9 +4,9 @@ class_name Economy
 var data: Dictionary = {}
 
 const DEFAULT_PRESS := {
-    "growth": {"currency": "mana", "cost": 10, "duration": 180.0, "multiplier": 1.25},
-    "harvest": {"currency": "essence", "cost": 6, "duration": 150.0, "multiplier": 1.4},
-    "drop": {"currency": "mana", "cost": 8, "duration": 120.0, "multiplier": 1.3}
+    "growth": {"currency": "mana", "cost": 10, "duration": 180.0, "multiplier": 1.25, "fruit": "-", "label": "Growth Brew", "summary": ""},
+    "harvest": {"currency": "essence", "cost": 6, "duration": 150.0, "multiplier": 1.4, "fruit": "-", "label": "Harvest Brew", "summary": ""},
+    "drop": {"currency": "mana", "cost": 8, "duration": 120.0, "multiplier": 1.3, "fruit": "-", "label": "Drop Brew", "summary": ""}
 }
 
 func load_data(values: Dictionary) -> void:
@@ -57,7 +57,10 @@ func get_press_recipe(kind: String) -> Dictionary:
             "currency": str(press[kind].get("currency", "mana")),
             "cost": int(press[kind].get("cost", 0)),
             "duration": float(press[kind].get("duration", 0.0)),
-            "multiplier": float(press[kind].get("multiplier", 1.0))
+            "multiplier": float(press[kind].get("multiplier", 1.0)),
+            "fruit": str(press[kind].get("fruit", "-")),
+            "label": str(press[kind].get("label", kind.capitalize())),
+            "summary": str(press[kind].get("summary", ""))
         }
     return DEFAULT_PRESS.get(kind, DEFAULT_PRESS["growth"]).duplicate(true)
 

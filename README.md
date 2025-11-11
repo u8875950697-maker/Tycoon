@@ -37,3 +37,9 @@
 - Five themed worlds (Meadow through Dream Isles) each provide a 4×4 grid, hazards, and short-run objectives with selectable session lengths.
 - Tree care, fruit harvesting, processing buffs, breeding (World 2+), offline rewards, and prestige systems are implemented without placeholder logic.
 - Ethical rewarded-ad stubs gate optional coin doubles and slot unlocks while dev cheats stay toggleable for quick QA.
+
+## World Dressing & UI Polish
+- Each biome now features layered paper parallax, decals, and lightweight particles to reinforce its atmosphere without heavy post-process.
+- Hazards and one-per-run world buffs surface through the top HUD with clear iconography, tooltips, and cooldown feedback.
+- Tree panels expose care timers with iconography while the press and buff badge communicate active boosts at a glance.
+- Plot tiles include paper frames, price tags, and celebratory unlock particles to highlight slot expansion moments.

@@ -23,7 +23,9 @@ func populate_worlds(worlds: Dictionary) -> void:
     for world_id in worlds.keys():
         var data := worlds[world_id]
         var button := Button.new()
-        button.text = "%s — %s" % [str(data.get("display_name", world_id.capitalize())), str(data.get("buff", ""))]
+        var buff_info: Dictionary = data.get("buff", {})
+        var buff_name := buff_info.get("name", "Stage Buff")
+        button.text = "%s — %s" % [str(data.get("display_name", world_id.capitalize())), buff_name]
         button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
         button.pressed.connect(func(id := world_id): _select_world(id, worlds[id]))
         world_list.add_child(button)

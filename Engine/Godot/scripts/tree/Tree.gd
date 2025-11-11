@@ -99,7 +99,7 @@ func _advance_growth(delta: float) -> void:
         growth_rate *= 1.25
     if fertilizer_timer > 0:
         growth_rate *= 1.35
-    if ability == "growth_aura":
+    if ability == "aura":
         growth_rate *= 1.0 + ability_value
     if is_diseased:
         growth_rate *= 0.45
@@ -183,6 +183,18 @@ func apply_care(care_type: String, duration: float) -> void:
 
 func set_external_growth(multiplier: float) -> void:
     external_growth_multiplier = multiplier
+
+func get_care_status(boost_duration: float) -> Dictionary:
+    var safe_duration := max(0.01, boost_duration)
+    return {
+        "water": clamp(water_timer / safe_duration, 0.0, 1.0),
+        "fertilizer": clamp(fertilizer_timer / safe_duration, 0.0, 1.0),
+        "disease": clamp(disease_timer / 20.0, 0.0, 1.0),
+        "water_time": water_timer,
+        "fertilizer_time": fertilizer_timer,
+        "disease_time": disease_timer,
+        "is_diseased": is_diseased
+    }
 
 func set_selected(value: bool) -> void:
     if not selection_sprite:

@@ -29,6 +29,8 @@ var current_world_id := "meadow"
 var current_session_length := 600
 var session_elapsed := 0.0
 var session_running := false
+var session_buff_used := false
+var session_buff_active := {}
 
 var offline_result := {
     "coins": 0,
@@ -107,6 +109,8 @@ func reset_defaults() -> void:
     offline_double_timestamp = 0
     ad_views_today = 0
     ad_reset_timestamp = last_session_timestamp
+    session_buff_used = false
+    session_buff_active = {}
 
 func load_state() -> void:
     reset_defaults()
@@ -168,6 +172,29 @@ func get_world_data(id: String) -> Dictionary:
 func get_fruit_data(id: String) -> Dictionary:
     return fruit_definitions.get(id, {})
 
+func get_world_hazard(id: String) -> Dictionary:
+    return get_world_data(id).get("hazard", {})
+
+func get_world_buff(id: String) -> Dictionary:
+    return get_world_data(id).get("buff", {})
+
+func can_use_world_buff(world_id: String) -> bool:
+    if not session_running:
+        return false
+    if session_buff_used:
+        return false
+    return not get_world_buff(world_id).is_empty()
+
+func consume_world_buff(world_id: String) -> Dictionary:
+    if not can_use_world_buff(world_id):
+        return {}
+    session_buff_used = true
+    session_buff_active = get_world_buff(world_id).duplicate(true)
+    return session_buff_active
+
+func get_active_world_buff() -> Dictionary:
+    return session_buff_active.duplicate(true)
+
 func add_currency(type: String, amount: int) -> void:
     if not currencies.has(type):
         return
@@ -225,6 +252,8 @@ func start_session(world_id: String, duration_seconds: int) -> void:
     current_session_length = duration_seconds
     session_elapsed = 0.0
     session_running = true
+    session_buff_used = false
+    session_buff_active = {}
     breeding_attempts_used = 0
     breeding_cooldown_end = Time.get_unix_time_from_system()
 

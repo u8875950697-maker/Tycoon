@@ -38,6 +38,19 @@ func update_currencies(values: Dictionary) -> void:
     if top_bar:
         top_bar.set_currencies(values)
 
+func update_world_status(name: String, hazard: Dictionary) -> void:
+    if top_bar:
+        top_bar.set_world_info(name, hazard)
+
+func configure_world_buff(info: Dictionary, available: bool, status_text: String, tooltip: String) -> void:
+    if top_bar:
+        top_bar.set_world_buff(info, available, status_text)
+        top_bar.set_buff_button_tooltip(tooltip)
+
+func update_buff_badge(preview: Dictionary) -> void:
+    if top_bar:
+        top_bar.set_buff_badge(preview)
+
 func show_tree_details(tree: TreeActor, info: Dictionary) -> void:
     if tree_panel and tree_panel is TreePanel:
         tree_panel.set_tree(tree, info)
