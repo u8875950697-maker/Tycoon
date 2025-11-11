@@ -41,10 +41,7 @@ func get_available_tree_ids(world_id: String) -> Array:
     return result
 
 func get_slot_cost(index: int) -> int:
-    var costs: Array = GameState.economy.get("slot_costs", [])
-    if index < costs.size():
-        return int(costs[index])
-    return 2000 + (index * 800)
+    return Economy.get_slot_cost(index)
 
 func apply_world_bonuses(tree: TreeActor) -> void:
     if tree == null:

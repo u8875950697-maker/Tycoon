@@ -106,7 +106,7 @@ func _spawn_tree_on_plot(plot: PlotTile, tree_id: String) -> void:
         return
     plot.remove_tree()
     var tree: TreeActor = TREE_SCENE.instantiate()
-    tree.setup(tree_id, tree_data, float(GameState.economy.get("fruit_spawn_interval", 12)))
+    tree.setup(tree_id, tree_data, Economy.get_fruit_spawn_interval())
     tree.harvested.connect(_on_tree_harvested)
     tree.selected.connect(_on_tree_selected)
     plot.attach_tree(tree)
@@ -194,16 +194,16 @@ func _on_tree_harvested(fruit_id: String, tree: TreeActor) -> void:
 func _on_care_requested(care_type: String) -> void:
     if selected_tree == null:
         return
-    var duration := float(GameState.economy.get("care", {}).get("boost_duration", 20))
+    var duration := Economy.get_care_duration()
     match care_type:
         "water":
-            if GameState.spend_currency("coins", int(GameState.economy.get("care", {}).get("water_cost", 8))):
+            if GameState.spend_currency("coins", Economy.get_care_cost("water")):
                 selected_tree.apply_care("water", duration)
         "fertilize":
-            if GameState.spend_currency("coins", int(GameState.economy.get("care", {}).get("fertilizer_cost", 12))):
+            if GameState.spend_currency("coins", Economy.get_care_cost("fertilize")):
                 selected_tree.apply_care("fertilize", duration)
         "cure":
-            if GameState.spend_currency("coins", int(GameState.economy.get("care", {}).get("cure_cost", 16))):
+            if GameState.spend_currency("coins", Economy.get_care_cost("cure")):
                 selected_tree.apply_care("cure", duration)
     _refresh_top_bar()
 
@@ -217,19 +217,17 @@ func _on_remove_requested() -> void:
     GameState.save_state()
 
 func _on_craft_requested(kind: String) -> void:
-    match kind:
-        "growth":
-            if GameState.spend_currency("mana", 10):
-                active_buffs["growth"]["time"] = 180
-                active_buffs["growth"]["mult"] = 1.25
-        "harvest":
-            if GameState.spend_currency("essence", 6):
-                active_buffs["harvest"]["time"] = 150
-                active_buffs["harvest"]["mult"] = 1.4
-        "drop":
-            if GameState.spend_currency("mana", 8):
-                active_buffs["drop"]["time"] = 120
-                active_buffs["drop"]["mult"] = 1.3
+    var recipe := Economy.get_press_recipe(kind)
+    if recipe.is_empty():
+        return
+    var cost_currency := recipe.get("currency", "coins")
+    var cost_amount := int(recipe.get("cost", 0))
+    if cost_amount > 0 and not GameState.spend_currency(cost_currency, cost_amount):
+        return
+    if not active_buffs.has(kind):
+        active_buffs[kind] = {"time": 0.0, "mult": 1.0}
+    active_buffs[kind]["time"] = float(recipe.get("duration", 0.0))
+    active_buffs[kind]["mult"] = float(recipe.get("multiplier", 1.0))
     _refresh_top_bar()
     _refresh_press_panel()
 

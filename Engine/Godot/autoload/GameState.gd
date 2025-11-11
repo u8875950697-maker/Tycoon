@@ -65,6 +65,7 @@ func load_definitions() -> void:
     fruit_definitions = _load_json("res://data/fruits.json")
     world_definitions = _load_json("res://data/worlds.json")
     economy = _load_json("res://data/economy.json")
+    Economy.load_data(economy)
     monetization = _load_json("res://data/monetization_flags.json")
 
 func _load_json(path: String) -> Dictionary:
@@ -229,39 +230,29 @@ func should_end_session() -> bool:
 
 func compute_offline_rewards() -> void:
     var now := Time.get_unix_time_from_system()
-    var offline_seconds := max(0, now - last_session_timestamp)
     var world_info := get_world_data(current_world_id)
-    var cap_hours := int(world_info.get("offline_cap_hours", 4))
-    if prestige_upgrades.get("offline", false):
-        cap_hours += 2
-    if now < last_session_timestamp or offline_seconds > (cap_hours * 3600) + 1800:
-        offline_ready = false
-        offline_result = {
-            "coins": 0,
-            "mana": 0,
-            "essence": 0,
-            "gems": 0,
-            "hours": 0.0,
-            "summary": "Clock anomaly detected"
-        }
-        return
-    var offline_hours := min(cap_hours, float(offline_seconds) / 3600.0)
-    var multiplier := 0.6
-    if last_session_duration < 600 and last_session_duration > 0:
-        multiplier *= 1.2
-    var base_rate := float(economy.get("base_coin_rate", 5))
-    var coins := int(round(base_rate * offline_hours * multiplier))
-    var mana := int(round(coins * 0.2))
-    var essence := int(round(coins * 0.05))
-    offline_result = {
-        "coins": coins,
-        "mana": mana,
-        "essence": essence,
+    var cap_hours := Offline.get_cap_hours(world_info, prestige_upgrades.get("offline", false))
+    var offline_data := Offline.calculate({
+        "now": now,
+        "last_timestamp": last_session_timestamp,
+        "cap_hours": cap_hours,
+        "clock_guard_seconds": Offline.get_clock_guard_seconds(Economy.get_clock_guard_seconds()),
+        "multiplier": Economy.get_offline_multiplier(),
+        "catch_up_bonus": last_session_duration > 0 and last_session_duration < 600,
+        "base_coin_rate": Economy.get_base_coin_rate(),
+        "mana_ratio": Economy.get_offline_mana_ratio(),
+        "essence_ratio": Economy.get_offline_essence_ratio(),
+        "prestige_multiplier": _get_offline_prestige_multiplier()
+    })
+    offline_ready = bool(offline_data.get("ready", false))
+    offline_result = offline_data.get("result", {
+        "coins": 0,
+        "mana": 0,
+        "essence": 0,
         "gems": 0,
-        "hours": offline_hours,
-        "summary": "Away for %.1f h" % offline_hours
-    }
-    offline_ready = coins > 0 or mana > 0 or essence > 0
+        "hours": 0.0,
+        "summary": ""
+    })
 
 func has_offline_rewards() -> bool:
     return offline_ready
@@ -276,6 +267,8 @@ func collect_offline(mode: String) -> void:
     elif mode == "gems" and monetization.get("offline_double_gems", true) and currencies.get("gems", 0) >= 1:
         if spend_currency("gems", 1):
             coins *= 2
+    elif mode == "skip":
+        pass
     add_currency("coins", coins)
     add_currency("mana", offline_result.get("mana", 0))
     add_currency("essence", offline_result.get("essence", 0))
@@ -308,8 +301,18 @@ func consume_ad_view() -> void:
     ad_views_today += 1
     breeding_cooldown_end = Time.get_unix_time_from_system()
 
+func _get_offline_prestige_multiplier() -> float:
+    var multiplier := 1.0
+    if prestige_upgrades.get("growth", false):
+        multiplier += Economy.get_prestige_bonus("growth")
+    if prestige_upgrades.get("fruit", false):
+        multiplier += Economy.get_prestige_bonus("fruit")
+    if prestige_upgrades.get("mana", false):
+        multiplier += Economy.get_prestige_bonus("mana")
+    return multiplier
+
 func get_breeding_data() -> Dictionary:
-    var info := economy.get("breeding", {})
+    var info := Economy.get_breeding_config()
     var free_attempts := max(0, int(info.get("free_attempts", 3)) - breeding_attempts_used)
     var cooldown_remaining := max(0, breeding_cooldown_end - Time.get_unix_time_from_system())
     var cooldown_text := ""
@@ -319,6 +322,7 @@ func get_breeding_data() -> Dictionary:
         "attempts": free_attempts,
         "cooldown": cooldown_remaining,
         "cooldown_text": cooldown_text,
+        "cooldown_seconds": int(info.get("cooldown_seconds", 120)),
         "gem_fee": int(info.get("gem_fee", 2)),
         "coins": int(info.get("coins", 0)),
         "essence": int(info.get("essence", 0))
@@ -386,7 +390,7 @@ func reset_breeding_if_needed() -> void:
         breeding_reset_time = now
 
 func apply_prestige(total_value: int) -> int:
-    var rate := float(economy.get("prestige", {}).get("conversion_rate", 0.0005))
+    var rate := Economy.get_prestige_conversion_rate()
     var earned := int(floor(total_value * rate))
     if earned <= 0:
         return 0
