@@ -25,6 +25,10 @@ var is_diseased := false
 var ability := ""
 var ready := false
 var external_growth_multiplier := 1.0
+var ability_value := 0.0
+var world_growth_multiplier := 1.0
+var world_disease_multiplier := 1.0
+var world_drop_bonus := 0.0
 
 func _ready() -> void:
     rng.randomize()
@@ -32,11 +36,17 @@ func _ready() -> void:
         click_area.input_event.connect(_on_click)
     set_process(false)
 
-func setup(id: String, data: Dictionary, spawn_interval: float) -> void:
+func setup(id: String, data: Dictionary, spawn_interval: float, modifiers: Dictionary = {}) -> void:
     tree_id = id
     tree_data = data
     ability = data.get("ability", "")
+    ability_value = float(data.get("ability_value", 0.0))
     growth_time = max(5.0, float(data.get("growth_time", 30)))
+    world_growth_multiplier = float(modifiers.get("growth_multiplier", 1.0))
+    world_disease_multiplier = float(modifiers.get("disease_multiplier", 1.0))
+    world_drop_bonus = float(modifiers.get("rare_drop_bonus", 0.0))
+    if world_growth_multiplier > 0.0:
+        growth_time = max(5.0, growth_time / world_growth_multiplier)
     base_spawn_interval = max(2.0, spawn_interval)
     external_growth_multiplier = 1.0
     _build_layers()
@@ -90,7 +100,7 @@ func _advance_growth(delta: float) -> void:
     if fertilizer_timer > 0:
         growth_rate *= 1.35
     if ability == "growth_aura":
-        growth_rate *= 1.15
+        growth_rate *= 1.0 + ability_value
     if is_diseased:
         growth_rate *= 0.45
     growth_rate *= external_growth_multiplier
@@ -138,21 +148,23 @@ func _spawn_fruit() -> void:
             break
     var auto_delay := 0.0
     if ability == "auto_harvest":
-        auto_delay = 1.2
+        auto_delay = max(0.5, ability_value)
     fruit_scene.setup(selected_id, fruit_tex, fruit_color, auto_delay)
     fruit_scene.position = Vector3(rng.randf_range(-0.2, 0.2), rng.randf_range(1.1, 1.6), rng.randf_range(-0.18, -0.05))
     fruit_scene.harvested.connect(_on_fruit_harvested)
     fruit_root.add_child(fruit_scene)
     if ability == "auto_water":
-        water_timer = max(water_timer, 6.0)
+        water_timer = max(water_timer, ability_value)
     if ability == "mana_gen":
-        GameState.add_currency("mana", 1)
+        GameState.add_currency("mana", int(round(max(1.0, ability_value))))
+    if ability == "aura":
+        GameState.add_currency("mana", max(1, int(round(ability_value * 8.0))))
 
 func _on_fruit_harvested(fruit_id: String, tree_ref: Node) -> void:
     emit_signal("harvested", fruit_id, self)
 
 func _roll_disease() -> void:
-    var chance := float(tree_data.get("disease_chance", 0.02))
+    var chance := float(tree_data.get("disease_chance", 0.02)) * world_disease_multiplier
     if ability == "aura":
         chance *= 0.7
     if rng.randf() <= chance:

@@ -13,6 +13,8 @@ const PLOT_SCENE := preload("res://scenes/Plot.tscn")
 @onready var welcome_popup: WelcomeBackPopup = $UI/WelcomeBack
 @onready var run_summary: RunSummaryPopup = $UI/RunSummary
 @onready var world_select: WorldSelect = $WorldSelect
+@onready var parallax_root: Node3D = $ParallaxRoot
+@onready var world_camera: Camera3D = $Camera
 
 var plots: Array = []
 var selected_plot: PlotTile = null
@@ -25,10 +27,18 @@ var active_buffs := {
 }
 var last_currency_update := 0.0
 var rng := RandomNumberGenerator.new()
+var world_effects := {}
+var parallax_bases := {}
+var parallax_time := 0.0
 
 func _ready() -> void:
     GameState.initialize()
     rng.randomize()
+    _update_world_effects()
+    if parallax_root:
+        parallax_bases.clear()
+        for child in parallax_root.get_children():
+            parallax_bases[child.name] = child.position
     $UI.add_child(plant_menu)
     plant_menu.id_pressed.connect(_on_plant_selected)
     _register_ui()
@@ -41,7 +51,12 @@ func _ready() -> void:
     _refresh_prestige_panel()
     _refresh_world_info()
     if GameState.has_offline_rewards():
-        UIManager.show_welcome_back(GameState.offline_result.get("summary", ""), GameState.offline_result, GameState.monetization.get("offline_double_ads", true) and GameState.can_use_ad(), GameState.monetization.get("offline_double_gems", true))
+        UIManager.show_welcome_back(
+            GameState.offline_result.get("summary", ""),
+            GameState.offline_result,
+            GameState.can_use_offline_double_ad(),
+            GameState.monetization.get("offline_double_gems", true) and GameState.can_use_offline_double()
+        )
     UIManager.show_world_select(WorldController.get_worlds())
     world_select.world_chosen.connect(_on_world_chosen)
     welcome_popup.collect.connect(_on_welcome_collect)
@@ -106,18 +121,24 @@ func _spawn_tree_on_plot(plot: PlotTile, tree_id: String) -> void:
         return
     plot.remove_tree()
     var tree: TreeActor = TREE_SCENE.instantiate()
-    tree.setup(tree_id, tree_data, Economy.get_fruit_spawn_interval())
+    tree.setup(tree_id, tree_data, Economy.get_fruit_spawn_interval(), world_effects)
     tree.harvested.connect(_on_tree_harvested)
     tree.selected.connect(_on_tree_selected)
     plot.attach_tree(tree)
+    WorldController.apply_world_bonuses(tree)
 
 func _refresh_top_bar() -> void:
     UIManager.update_currencies(GameState.currencies)
 
 func _refresh_world_info() -> void:
     var world_info := GameState.get_world_data(GameState.current_world_id)
+    world_effects = world_info.get("effects", {})
     var name := str(world_info.get("display_name", GameState.current_world_id.capitalize()))
     top_bar.set_world_name(name)
+
+func _update_world_effects() -> void:
+    var world_info := GameState.get_world_data(GameState.current_world_id)
+    world_effects = world_info.get("effects", {})
 
 func _on_plot_selected(plot: PlotTile) -> void:
     _select_plot(plot)
@@ -185,19 +206,44 @@ func _on_unlock_requested(plot: PlotTile) -> void:
 
 func _on_tree_harvested(fruit_id: String, tree: TreeActor) -> void:
     var fruit := GameState.record_harvest(fruit_id)
+    if fruit.is_empty():
+        return
+    var tree_info := GameState.get_tree_data(tree.tree_id)
+    var ability := str(tree_info.get("ability", ""))
+    var ability_value := float(tree_info.get("ability_value", 0.0))
+    var crit_bonus := float(world_effects.get("crit_bonus", 0.0))
+    if ability == "crit":
+        var crit_chance := clamp(ability_value + crit_bonus, 0.0, 0.95)
+        if rng.randf() < crit_chance:
+            GameState.add_currency("coins", int(fruit.get("coins", 0)))
+            GameState.add_currency("mana", int(round(fruit.get("mana", 0) * 0.5)))
+            GameState.add_currency("essence", int(round(fruit.get("essence", 0) * 0.5)))
     if active_buffs["harvest"]["time"] > 0:
-        GameState.add_currency("coins", int(fruit.get("coins", 0) * 0.5))
-    if active_buffs["drop"]["time"] > 0 and rng.randf() < 0.15:
-        GameState.record_harvest(fruit_id)
+        var harvest_mult := active_buffs["harvest"].get("mult", 1.0)
+        var bonus := int(round(fruit.get("coins", 0) * max(0.0, harvest_mult - 1.0)))
+        if bonus > 0:
+            GameState.add_currency("coins", bonus)
+    if active_buffs["drop"]["time"] > 0:
+        var drop_mult := active_buffs["drop"].get("mult", 1.0)
+        var drop_chance := min(0.6, 0.12 + 0.1 * drop_mult + float(world_effects.get("rare_drop_bonus", 0.0)))
+        if rng.randf() < drop_chance:
+            GameState.record_harvest(fruit_id)
+    var rare_bonus := float(world_effects.get("rare_drop_bonus", 0.0))
+    var rarity := str(fruit.get("rarity", ""))
+    if rare_bonus > 0.0 and ["rare", "epic", "legendary", "mythic"].has(rarity):
+        if rng.randf() < rare_bonus:
+            GameState.record_harvest(fruit_id)
     _refresh_top_bar()
 
 func _on_care_requested(care_type: String) -> void:
     if selected_tree == null:
         return
     var duration := Economy.get_care_duration()
+    var water_multiplier := float(world_effects.get("water_cost_multiplier", 1.0))
     match care_type:
         "water":
-            if GameState.spend_currency("coins", Economy.get_care_cost("water")):
+            var cost := int(round(Economy.get_care_cost("water") * water_multiplier))
+            if GameState.spend_currency("coins", max(0, cost)):
                 selected_tree.apply_care("water", duration)
         "fertilize":
             if GameState.spend_currency("coins", Economy.get_care_cost("fertilize")):
@@ -262,10 +308,16 @@ func _refresh_breeding_panel() -> void:
     GameState.reset_breeding_if_needed()
     var info := GameState.get_breeding_data()
     var tree_ids := WorldController.get_available_tree_ids(GameState.current_world_id)
-    var odds_text := "Mutation 10%"
     breeding_panel.set_tree_options(tree_ids)
+    var locked := info.get("locked", false)
+    breeding_panel.set_locked(locked, "Unlock breeding in World 2 onwards")
+    if locked:
+        breeding_panel.set_attempts_remaining(0, info.get("cooldown_text", ""))
+        breeding_panel.set_odds_text("Locked")
+        breeding_panel.set_result("Result: Unlock a later world")
+        return
     breeding_panel.set_attempts_remaining(info.get("attempts", 0), info.get("cooldown_text", ""))
-    breeding_panel.set_odds_text(odds_text)
+    breeding_panel.set_odds_text("Mutation 10% (+5% native biome)")
 
 func _refresh_prestige_panel() -> void:
     UIManager.configure_prestige(GameState.currencies.get("prestige_leaves", 0), GameState.prestige_upgrades, {})
@@ -292,6 +344,7 @@ func _on_world_chosen(world_id: String, duration: int) -> void:
     WorldController.load_world(world_id)
     GameState.start_session(world_id, duration)
     GameState.current_world_id = world_id
+    _update_world_effects()
     _restore_saved_trees()
     UIManager.hide_world_select()
     selected_plot = null
@@ -301,6 +354,7 @@ func _on_world_chosen(world_id: String, duration: int) -> void:
     _refresh_prestige_panel()
     _refresh_top_bar()
     _refresh_world_info()
+    _refresh_press_panel()
     GameState.save_state()
 
 func _on_continue_requested() -> void:
@@ -329,8 +383,31 @@ func _process(delta: float) -> void:
         if not run_summary.visible:
             _show_run_summary()
         return
+    _update_parallax(delta)
     _refresh_press_panel()
 
 func _show_run_summary() -> void:
     var summary := "Coins: %d\nMana: %d\nEssence: %d" % [GameState.currencies.get("coins", 0), GameState.currencies.get("mana", 0), GameState.currencies.get("essence", 0)]
     UIManager.show_run_summary(summary)
+
+func _update_parallax(delta: float) -> void:
+    if parallax_root == null or parallax_bases.is_empty():
+        return
+    parallax_time = fmod(parallax_time + delta * 0.6, TAU)
+    var wave := sin(parallax_time) * 0.5
+    var camera_offset := 0.0
+    if world_camera:
+        camera_offset = clamp(world_camera.global_position.x * 0.05, -0.6, 0.6)
+    for child in parallax_root.get_children():
+        if not parallax_bases.has(child.name):
+            continue
+        var base_pos := parallax_bases[child.name]
+        var weight := 0.15
+        match child.name:
+            "Foreground":
+                weight = 0.45
+            "Midground":
+                weight = 0.25
+            "Sky":
+                weight = 0.1
+        child.position.x = base_pos.x + wave * weight + camera_offset * weight

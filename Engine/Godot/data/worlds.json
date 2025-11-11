@@ -8,7 +8,15 @@
     "native_trees": ["wood_tree", "water_birch"],
     "hazard": "Low disease chance, gentle winds",
     "buff": "+15% growth rate",
-    "goal": {"type": "harvest", "target": 60, "fruit": "wood_apple"}
+    "goal": {"type": "harvest", "target": 60, "fruit": "wood_apple"},
+    "breeding_unlocked": false,
+    "effects": {
+      "growth_multiplier": 1.1,
+      "disease_multiplier": 0.85,
+      "water_cost_multiplier": 1.0,
+      "rare_drop_bonus": 0.05,
+      "crit_bonus": 0.0
+    }
   },
   "swamp": {
     "display_name": "Sunkissed Swamp",
@@ -19,7 +27,15 @@
     "native_trees": ["algae_tree", "water_birch"],
     "hazard": "Higher disease chance",
     "buff": "Water costs halved",
-    "goal": {"type": "craft", "target": 1, "item": "swamp_elixir"}
+    "goal": {"type": "craft", "target": 1, "item": "swamp_elixir"},
+    "breeding_unlocked": true,
+    "effects": {
+      "growth_multiplier": 1.0,
+      "disease_multiplier": 1.35,
+      "water_cost_multiplier": 0.6,
+      "rare_drop_bonus": 0.05,
+      "crit_bonus": 0.0
+    }
   },
   "volcano": {
     "display_name": "Volcano Ridge",
@@ -30,7 +46,15 @@
     "native_trees": ["ash_tree"],
     "hazard": "Heat surges increase water use",
     "buff": "+20% rare fruit chance",
-    "goal": {"type": "harvest", "target": 30, "rarity": "rare"}
+    "goal": {"type": "harvest", "target": 30, "rarity": "rare"},
+    "breeding_unlocked": true,
+    "effects": {
+      "growth_multiplier": 0.95,
+      "disease_multiplier": 1.1,
+      "water_cost_multiplier": 1.4,
+      "rare_drop_bonus": 0.2,
+      "crit_bonus": 0.05
+    }
   },
   "ice_coast": {
     "display_name": "Ice Coast",
@@ -41,7 +65,15 @@
     "native_trees": ["frost_pine"],
     "hazard": "Slower growth",
     "buff": "Double rare fruit drop chance",
-    "goal": {"type": "craft", "target": 1, "item": "frost_elixir"}
+    "goal": {"type": "craft", "target": 1, "item": "frost_elixir"},
+    "breeding_unlocked": true,
+    "effects": {
+      "growth_multiplier": 0.85,
+      "disease_multiplier": 0.9,
+      "water_cost_multiplier": 1.1,
+      "rare_drop_bonus": 0.25,
+      "crit_bonus": 0.08
+    }
   },
   "dream_isles": {
     "display_name": "Dream Isles",
@@ -52,6 +84,14 @@
     "native_trees": ["dream_willow", "prism_lily"],
     "hazard": "Mana storms randomize timers",
     "buff": "+25% crit harvest chance",
-    "goal": {"type": "harvest", "target": 20, "rarity": "epic"}
+    "goal": {"type": "harvest", "target": 20, "rarity": "epic"},
+    "breeding_unlocked": true,
+    "effects": {
+      "growth_multiplier": 1.05,
+      "disease_multiplier": 0.8,
+      "water_cost_multiplier": 0.95,
+      "rare_drop_bonus": 0.3,
+      "crit_bonus": 0.25
+    }
   }
 }
