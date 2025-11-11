@@ -5,16 +5,16 @@ config_version=5
 
 [application]
 config/name="Evergrove Tycoon"
-config/description="Paper-style tycoon prototype scaffold"
-config/features=PackedStringArray("4.0")
-run/main_scene="res://scenes/Main.tscn"
+config/description="Paper-style tycoon (2.5D)"
+config/features=PackedStringArray("4.5")
+run/main_scene="res://Engine/Godot/scenes/ui/TitleScreen.tscn"
 
 [autoload]
-GameState="*res://autoload/GameState.gd"
-UIManager="*res://autoload/UIManager.gd"
-WorldController="*res://autoload/WorldController.gd"
-Economy="*res://autoload/Economy.gd"
-Offline="*res://autoload/Offline.gd"
+GameState="*res://Engine/Godot/autoload/GameState.gd"
+UIManager="*res://Engine/Godot/autoload/UIManager.gd"
+WorldController="*res://Engine/Godot/autoload/WorldController.gd"
+Economy="*res://Engine/Godot/autoload/Economy.gd"
+Offline="*res://Engine/Godot/autoload/Offline.gd"
 
 [rendering]
 renderer/rendering_method="forward_plus"

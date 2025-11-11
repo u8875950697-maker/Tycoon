@@ -2,12 +2,14 @@
 .DS_Store
 Thumbs.db
 
-# Builds and packages
+# Builds (keep Web README)
 Builds/*
 !Builds/.gitkeep
 !Builds/Web/
 Builds/Web/*
 !Builds/Web/README.md
+
+# Archives / temp
 *.zip
 *.tmp
 
