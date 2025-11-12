@@ -1,0 +1,7 @@
+#!/bin/sh
+MARKER='<<<'
+MARKER="${MARKER}<<<<"
+if grep -r "$MARKER" .; then
+  echo "❌ Conflict markers found. Resolve them before committing."
+  exit 1
+fi
