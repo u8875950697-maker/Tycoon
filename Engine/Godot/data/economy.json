@@ -1,0 +1,25 @@
+{
+  "slot_costs": [0, 0, 0, 300, 600, 1200, 2400, 4200, 6800, 9600, 12800, 16000],
+  "care": {
+    "water_cost": 8,
+    "fertilizer_cost": 12,
+    "cure_cost": 16,
+    "boost_duration": 20
+  },
+  "fruit_spawn_interval": 12,
+  "base_coin_rate": 6,
+
+  "breeding": {
+    "coins": 180,
+    "essence": 4,
+    "free_attempts": 3,
+    "cooldown_seconds": 120,
+    "gem_fee": 2
+  },
+  "prestige": {
+    "conversion_rate": 0.0005,
+    "growth_bonus": 0.1,
+    "fruit_bonus": 0.1,
+    "mana_bonus": 0.1
+  }
+}

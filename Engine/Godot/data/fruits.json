@@ -1,0 +1,9 @@
+{
+  "wood_apple": {"coins": 12, "mana": 0, "essence": 0, "rarity": "common"},
+  "dew_pearl": {"coins": 10, "mana": 2, "essence": 0, "rarity": "common"},
+  "algae_pod": {"coins": 14, "mana": 3, "essence": 1, "rarity": "uncommon"},
+  "ember_fruit": {"coins": 24, "mana": 4, "essence": 2, "rarity": "rare"},
+  "ember_core": {"coins": 36, "mana": 6, "essence": 4, "rarity": "epic"},
+  "frost_cone": {"coins": 20, "mana": 5, "essence": 2, "rarity": "rare"},
+
+}
