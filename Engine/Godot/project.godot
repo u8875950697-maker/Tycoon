@@ -1,0 +1,19 @@
+; Engine configuration file.
+
+[gd_project]
+config_version=5
+
+[application]
+config/name="Evergrove Tycoon"
+config/description="Paper-style tycoon prototype"
+config/features=PackedStringArray("4.5")
+run/main_scene="res://ui/TitleScreen.tscn"
+
+[autoload]
+GameState="*res://scripts/GameState.gd"
+UIManager="*res://scripts/UIManager.gd"
+WorldController="*res://scripts/WorldController.gd"
+
+[rendering]
+renderer/rendering_method="forward_plus"
+renderer/rendering_method_mobile="forward_plus"
