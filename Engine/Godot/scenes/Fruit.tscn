@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://fruitnode"]
+
+[ext_resource type="Script" path="res://scripts/tree/Fruit.gd" id="1"]
+
+[node name="Fruit" type="Sprite3D"]
+script = ExtResource("1")
+billboard = 1
+texture_filter = 1
+input_pickable = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
