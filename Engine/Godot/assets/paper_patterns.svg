@@ -1,0 +1,39 @@
+<!-- Placeholder paper-style patterns for faux-paper textures -->
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <!-- Light fiber pattern -->
+    <pattern id="paper_fiber_light" width="16" height="16" patternUnits="userSpaceOnUse">
+      <rect width="16" height="16" fill="#f5f1e6"/>
+      <path d="M2 4l3 1m4 6l2 1m-1-9l2 2m-7 6l1 2" stroke="#e0d7c3" stroke-width="0.6" stroke-linecap="round" fill="none"/>
+    </pattern>
+    <!-- Mid fiber pattern -->
+    <pattern id="paper_fiber_mid" width="12" height="12" patternUnits="userSpaceOnUse">
+      <rect width="12" height="12" fill="#e7ddc5"/>
+      <path d="M1 3l2 1m5 4l1 1m-4-7l2 2m-2 6l2 1" stroke="#d1c3a3" stroke-width="0.6" stroke-linecap="round" fill="none"/>
+    </pattern>
+    <!-- Soft bark stripes -->
+    <pattern id="bark_stripe_soft" width="10" height="20" patternUnits="userSpaceOnUse">
+      <rect width="10" height="20" fill="#c6a686"/>
+      <rect x="2" width="2" height="20" fill="#b18f71" opacity="0.7"/>
+      <rect x="6" width="1.6" height="20" fill="#d2b291" opacity="0.8"/>
+    </pattern>
+    <!-- Subtle leaf veins -->
+    <pattern id="leaf_vein_subtle" width="14" height="14" patternUnits="userSpaceOnUse">
+      <rect width="14" height="14" fill="#92c47c"/>
+      <path d="M0 14 L14 0 M3 14 L14 3 M0 11 L11 0" stroke="#7da867" stroke-width="0.7" stroke-linecap="round" opacity="0.6"/>
+    </pattern>
+    <!-- Fruit speckle dots -->
+    <pattern id="fruit_dot_speckle" width="8" height="8" patternUnits="userSpaceOnUse">
+      <rect width="8" height="8" fill="#f16f6f"/>
+      <circle cx="2" cy="3" r="0.8" fill="#ff9a9a"/>
+      <circle cx="6" cy="5" r="0.7" fill="#ffb1b1"/>
+      <circle cx="4" cy="1.5" r="0.6" fill="#ff8383"/>
+    </pattern>
+  </defs>
+  <!-- Preview swatches -->
+  <rect x="4" y="4" width="32" height="32" fill="url(#paper_fiber_light)"/>
+  <rect x="44" y="4" width="32" height="32" fill="url(#paper_fiber_mid)"/>
+  <rect x="84" y="4" width="32" height="32" fill="url(#bark_stripe_soft)"/>
+  <rect x="24" y="48" width="32" height="32" fill="url(#leaf_vein_subtle)"/>
+  <rect x="64" y="48" width="32" height="32" fill="url(#fruit_dot_speckle)"/>
+</svg>
