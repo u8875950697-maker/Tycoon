@@ -1,0 +1,10 @@
+{
+  "rewarded_ads": true,
+  "daily_ad_cap": 3,
+  "slot_token_ads": true,
+  "offline_double_ads": true,
+  "offline_double_gems": true,
+  "cosmetic_shop": false,
+  "ad_cooldown_minutes": 10,
+  "dev_cheats": false
+}

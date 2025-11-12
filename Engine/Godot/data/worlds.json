@@ -1,0 +1,277 @@
+{
+  "meadow": {
+    "display_name": "Meadow",
+    "tier": "early",
+    "offline_cap_hours": 4,
+    "session_lengths": [5, 10, 20],
+    "base_slots": 3,
+    "native_trees": ["wood_tree", "water_birch"],
+    "hazard": {
+      "name": "Gentle Breezes",
+      "description": "Lower disease risk but gusts can shake fruit free",
+      "icon": "res://assets/icons/hazard.svg",
+      "color": "#6ca84a"
+    },
+    "buff": {
+      "id": "sunburst",
+      "name": "Sunburst",
+      "description": "+15% growth for 90s",
+      "type": "growth",
+      "multiplier": 1.15,
+      "duration": 90,
+      "icon": "res://assets/icons/buff.svg"
+    },
+    "goal": {"type": "harvest", "target": 60, "fruit": "wood_apple"},
+    "breeding_unlocked": false,
+    "effects": {
+      "growth_multiplier": 1.1,
+      "disease_multiplier": 0.85,
+      "water_cost_multiplier": 1.0,
+      "rare_drop_bonus": 0.05,
+      "crit_bonus": 0.0
+    },
+    "visuals": {
+      "sky_color": "#f4fff3",
+      "mid_color": "#c7ecc1",
+      "foreground_color": "#9edc82",
+      "ground_color": "#bce9a6",
+      "vignette_color": "#d6f6c4",
+      "ambient_light": "#f4ffe8",
+      "decals": [
+        {"texture": "res://assets/worlds/meadow_grass.svg", "position": [-2.5, 0.02, 1.8], "scale": [1.4, 1.4, 1]},
+        {"texture": "res://assets/worlds/meadow_grass.svg", "position": [0.0, 0.02, -1.4], "scale": [1.2, 1.2, 1]},
+        {"texture": "res://assets/worlds/meadow_grass.svg", "position": [2.2, 0.02, 1.2], "scale": [1.3, 1.3, 1]}
+      ],
+      "particles": {
+        "texture": "res://assets/particles/spore.svg",
+        "color": "#c8f5a6",
+        "amount": 32,
+        "lifetime": 5,
+        "speed": 0.3,
+        "gravity": [0, -0.2, 0],
+        "spread": 0.3,
+        "scale": 0.4
+      }
+    }
+  },
+  "swamp": {
+    "display_name": "Sunkissed Swamp",
+    "tier": "early",
+    "offline_cap_hours": 4,
+    "session_lengths": [5, 10, 20],
+    "base_slots": 3,
+    "native_trees": ["algae_tree", "water_birch"],
+    "hazard": {
+      "name": "Swamp Spores",
+      "description": "Higher disease chance while humidity spikes",
+      "icon": "res://assets/icons/hazard.svg",
+      "color": "#2f6e4a"
+    },
+    "buff": {
+      "id": "mist_mending",
+      "name": "Mist Mending",
+      "description": "Water costs halved for 75s",
+      "type": "water",
+      "multiplier": 0.5,
+      "duration": 75,
+      "icon": "res://assets/icons/water.svg"
+    },
+    "goal": {"type": "craft", "target": 1, "item": "swamp_elixir"},
+    "breeding_unlocked": true,
+    "effects": {
+      "growth_multiplier": 1.0,
+      "disease_multiplier": 1.35,
+      "water_cost_multiplier": 0.6,
+      "rare_drop_bonus": 0.05,
+      "crit_bonus": 0.0
+    },
+    "visuals": {
+      "sky_color": "#e2fff3",
+      "mid_color": "#a5e4c0",
+      "foreground_color": "#6bb68b",
+      "ground_color": "#6aa47a",
+      "vignette_color": "#9bd4af",
+      "ambient_light": "#e2ffee",
+      "decals": [
+        {"texture": "res://assets/worlds/swamp_reeds.svg", "position": [-2.2, 0.03, 1.6], "scale": [1.2, 1.2, 1]},
+        {"texture": "res://assets/worlds/swamp_reeds.svg", "position": [0.4, 0.03, -1.2], "scale": [1.1, 1.1, 1]},
+        {"texture": "res://assets/worlds/swamp_reeds.svg", "position": [2.4, 0.03, 1.4], "scale": [1.25, 1.25, 1]}
+      ],
+      "particles": {
+        "texture": "res://assets/particles/spore.svg",
+        "color": "#9fe2b8",
+        "amount": 48,
+        "lifetime": 6,
+        "speed": 0.25,
+        "gravity": [0, -0.1, 0],
+        "spread": 0.6,
+        "scale": 0.5
+      }
+    }
+  },
+  "volcano": {
+    "display_name": "Volcano Ridge",
+    "tier": "mid",
+    "offline_cap_hours": 6,
+    "session_lengths": [5, 10, 20],
+    "base_slots": 4,
+    "native_trees": ["ash_tree"],
+    "hazard": {
+      "name": "Heat Surge",
+      "description": "Water usage spikes but rare fruits glow",
+      "icon": "res://assets/icons/hazard.svg",
+      "color": "#ff6b3a"
+    },
+    "buff": {
+      "id": "ember_overdrive",
+      "name": "Ember Overdrive",
+      "description": "+25% rare fruit chance for 70s",
+      "type": "drop",
+      "multiplier": 1.25,
+      "duration": 70,
+      "icon": "res://assets/icons/buff.svg"
+    },
+    "goal": {"type": "harvest", "target": 30, "rarity": "rare"},
+    "breeding_unlocked": true,
+    "effects": {
+      "growth_multiplier": 0.95,
+      "disease_multiplier": 1.1,
+      "water_cost_multiplier": 1.4,
+      "rare_drop_bonus": 0.2,
+      "crit_bonus": 0.05
+    },
+    "visuals": {
+      "sky_color": "#ffe7d6",
+      "mid_color": "#f6b48e",
+      "foreground_color": "#d26a42",
+      "ground_color": "#703636",
+      "vignette_color": "#ffb48b",
+      "ambient_light": "#ffe4cf",
+      "decals": [
+        {"texture": "res://assets/worlds/volcano_cracks.svg", "position": [-2.3, 0.02, 1.4], "scale": [1.2, 1.2, 1]},
+        {"texture": "res://assets/worlds/volcano_cracks.svg", "position": [0.2, 0.02, -1.5], "scale": [1.0, 1.0, 1]},
+        {"texture": "res://assets/worlds/volcano_cracks.svg", "position": [2.1, 0.02, 1.1], "scale": [1.25, 1.25, 1]}
+      ],
+      "particles": {
+        "texture": "res://assets/particles/heat.svg",
+        "color": "#ffb366",
+        "amount": 40,
+        "lifetime": 4.5,
+        "speed": 0.35,
+        "gravity": [0, 0.15, 0],
+        "spread": 0.4,
+        "scale": 0.6
+      }
+    }
+  },
+  "ice_coast": {
+    "display_name": "Ice Coast",
+    "tier": "mid",
+    "offline_cap_hours": 6,
+    "session_lengths": [5, 10, 20],
+    "base_slots": 4,
+    "native_trees": ["frost_pine"],
+    "hazard": {
+      "name": "Frozen Sap",
+      "description": "Slower growth but rare drops glisten",
+      "icon": "res://assets/icons/hazard.svg",
+      "color": "#7db7e3"
+    },
+    "buff": {
+      "id": "crystal_breeze",
+      "name": "Crystal Breeze",
+      "description": "+20% harvest value for 80s",
+      "type": "harvest",
+      "multiplier": 1.2,
+      "duration": 80,
+      "icon": "res://assets/icons/buff.svg"
+    },
+    "goal": {"type": "craft", "target": 1, "item": "frost_elixir"},
+    "breeding_unlocked": true,
+    "effects": {
+      "growth_multiplier": 0.85,
+      "disease_multiplier": 0.9,
+      "water_cost_multiplier": 1.1,
+      "rare_drop_bonus": 0.25,
+      "crit_bonus": 0.08
+    },
+    "visuals": {
+      "sky_color": "#f2fbff",
+      "mid_color": "#c9e7ff",
+      "foreground_color": "#9ecceb",
+      "ground_color": "#b9daf5",
+      "vignette_color": "#d6edff",
+      "ambient_light": "#f2fbff",
+      "decals": [
+        {"texture": "res://assets/worlds/ice_patch.svg", "position": [-2.1, 0.02, 1.2], "scale": [1.2, 1.2, 1]},
+        {"texture": "res://assets/worlds/ice_patch.svg", "position": [0.5, 0.02, -1.6], "scale": [1.1, 1.1, 1]},
+        {"texture": "res://assets/worlds/ice_patch.svg", "position": [2.3, 0.02, 1.0], "scale": [1.25, 1.25, 1]}
+      ],
+      "particles": {
+        "texture": "res://assets/particles/snow.svg",
+        "color": "#ffffff",
+        "amount": 60,
+        "lifetime": 5.5,
+        "speed": 0.3,
+        "gravity": [0, -0.05, 0],
+        "spread": 0.6,
+        "scale": 0.45
+      }
+    }
+  },
+  "dream_isles": {
+    "display_name": "Dream Isles",
+    "tier": "late",
+    "offline_cap_hours": 8,
+    "session_lengths": [10, 20],
+    "base_slots": 5,
+    "native_trees": ["dream_willow", "prism_lily"],
+    "hazard": {
+      "name": "Mana Storms",
+      "description": "Crits surge but timers randomize slightly",
+      "icon": "res://assets/icons/hazard.svg",
+      "color": "#9b74d6"
+    },
+    "buff": {
+      "id": "lunar_echo",
+      "name": "Lunar Echo",
+      "description": "+30% mana gain for 90s",
+      "type": "mana",
+      "multiplier": 1.3,
+      "duration": 90,
+      "icon": "res://assets/icons/mana.svg"
+    },
+    "goal": {"type": "harvest", "target": 20, "rarity": "epic"},
+    "breeding_unlocked": true,
+    "effects": {
+      "growth_multiplier": 1.05,
+      "disease_multiplier": 0.8,
+      "water_cost_multiplier": 0.95,
+      "rare_drop_bonus": 0.3,
+      "crit_bonus": 0.25
+    },
+    "visuals": {
+      "sky_color": "#f9f3ff",
+      "mid_color": "#d7c7ff",
+      "foreground_color": "#b89bee",
+      "ground_color": "#bfa7f4",
+      "vignette_color": "#e6d9ff",
+      "ambient_light": "#f9f3ff",
+      "decals": [
+        {"texture": "res://assets/worlds/dream_spark.svg", "position": [-2.0, 0.02, 1.5], "scale": [1.2, 1.2, 1]},
+        {"texture": "res://assets/worlds/dream_spark.svg", "position": [0.6, 0.02, -1.4], "scale": [1.15, 1.15, 1]},
+        {"texture": "res://assets/worlds/dream_spark.svg", "position": [2.2, 0.02, 1.1], "scale": [1.25, 1.25, 1]}
+      ],
+      "particles": {
+        "texture": "res://assets/particles/aurora.svg",
+        "color": "#e3d0ff",
+        "amount": 36,
+        "lifetime": 6,
+        "speed": 0.28,
+        "gravity": [0, 0.05, 0],
+        "spread": 0.45,
+        "scale": 0.6
+      }
+    }
+  }
+}
