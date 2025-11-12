@@ -8,6 +8,7 @@
   },
   "fruit_spawn_interval": 12,
   "base_coin_rate": 6,
+
   "breeding": {
     "coins": 180,
     "essence": 4,

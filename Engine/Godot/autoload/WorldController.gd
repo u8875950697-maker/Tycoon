@@ -30,6 +30,7 @@ func get_world_offline_cap(world_id: String) -> int:
 func get_base_slots(world_id: String) -> int:
     return int(GameState.get_world_data(world_id).get("base_slots", 3))
 
+
 func get_available_tree_ids(world_id: String) -> Array:
     var world_info := GameState.get_world_data(world_id)
     var native := world_info.get("native_trees", [])
@@ -41,10 +42,7 @@ func get_available_tree_ids(world_id: String) -> Array:
     return result
 
 func get_slot_cost(index: int) -> int:
-    var costs: Array = GameState.economy.get("slot_costs", [])
-    if index < costs.size():
-        return int(costs[index])
-    return 2000 + (index * 800)
+
 
 func apply_world_bonuses(tree: TreeActor) -> void:
     if tree == null:

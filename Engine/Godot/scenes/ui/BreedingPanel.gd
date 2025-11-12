@@ -12,6 +12,7 @@ signal breed_requested(parent_a: String, parent_b: String)
 
 var tree_ids: Array[String] = []
 
+
 func _ready() -> void:
     breed_button.pressed.connect(_on_breed_pressed)
 
@@ -26,6 +27,7 @@ func set_tree_options(ids: Array) -> void:
     parent_b_option.select(0 if ids.size() > 1 else 0)
 
 func set_attempts_remaining(free_attempts: int, cooldown_text: String) -> void:
+
     attempts_label.text = "Attempts left: %d %s" % [free_attempts, cooldown_text]
     breed_button.disabled = free_attempts <= 0 and cooldown_text != ""
 
@@ -35,8 +37,7 @@ func set_odds_text(text: String) -> void:
 func set_result(text: String) -> void:
     result_label.text = text
 
-func _on_breed_pressed() -> void:
-    if tree_ids.is_empty():
+
         return
     var parent_a_idx := parent_a_option.get_selected_id()
     var parent_b_idx := parent_b_option.get_selected_id()

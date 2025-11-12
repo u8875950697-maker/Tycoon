@@ -3,11 +3,13 @@ class_name GameState
 
 const SAVE_PATH := "user://save.json"
 
+
 var tree_definitions := {}
 var fruit_definitions := {}
 var world_definitions := {}
 var economy := {}
 var monetization := {}
+
 
 var currencies := {
     "coins": 0,
@@ -30,6 +32,7 @@ var current_session_length := 600
 var session_elapsed := 0.0
 var session_running := false
 
+
 var offline_result := {
     "coins": 0,
     "mana": 0,
@@ -43,6 +46,7 @@ var offline_ready := false
 var breeding_attempts_used := 0
 var breeding_reset_time := 0
 var breeding_cooldown_end := 0
+
 
 var ad_views_today := 0
 var ad_reset_timestamp := 0
@@ -58,6 +62,7 @@ func _ready() -> void:
 func initialize() -> void:
     load_definitions()
     load_state()
+
     compute_offline_rewards()
 
 func load_definitions() -> void:
@@ -65,6 +70,7 @@ func load_definitions() -> void:
     fruit_definitions = _load_json("res://data/fruits.json")
     world_definitions = _load_json("res://data/worlds.json")
     economy = _load_json("res://data/economy.json")
+
     monetization = _load_json("res://data/monetization_flags.json")
 
 func _load_json(path: String) -> Dictionary:
@@ -99,8 +105,7 @@ func reset_defaults() -> void:
     breeding_attempts_used = 0
     breeding_reset_time = last_session_timestamp
     breeding_cooldown_end = last_session_timestamp
-    ad_views_today = 0
-    ad_reset_timestamp = last_session_timestamp
+
 
 func load_state() -> void:
     reset_defaults()
@@ -128,6 +133,7 @@ func load_state() -> void:
     ad_views_today = int(data.get("ad_views_today", 0))
     ad_reset_timestamp = int(data.get("ad_reset_timestamp", last_session_timestamp))
 
+
 func save_state() -> void:
     var data := {
         "currencies": currencies,
@@ -143,11 +149,11 @@ func save_state() -> void:
         "breeding_reset_time": breeding_reset_time,
         "breeding_cooldown_end": breeding_cooldown_end,
         "ad_views_today": ad_views_today,
-        "ad_reset_timestamp": ad_reset_timestamp
     }
     var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
     if file:
         file.store_string(JSON.stringify(data))
+
 
 func get_tree_data(id: String) -> Dictionary:
     return tree_definitions.get(id, {})
@@ -157,6 +163,7 @@ func get_world_data(id: String) -> Dictionary:
 
 func get_fruit_data(id: String) -> Dictionary:
     return fruit_definitions.get(id, {})
+
 
 func add_currency(type: String, amount: int) -> void:
     if not currencies.has(type):
@@ -216,6 +223,8 @@ func start_session(world_id: String, duration_seconds: int) -> void:
     session_elapsed = 0.0
     session_running = true
 
+
+
 func update_session(delta: float) -> void:
     if not session_running:
         return
@@ -229,39 +238,6 @@ func should_end_session() -> bool:
 
 func compute_offline_rewards() -> void:
     var now := Time.get_unix_time_from_system()
-    var offline_seconds := max(0, now - last_session_timestamp)
-    var world_info := get_world_data(current_world_id)
-    var cap_hours := int(world_info.get("offline_cap_hours", 4))
-    if prestige_upgrades.get("offline", false):
-        cap_hours += 2
-    if now < last_session_timestamp or offline_seconds > (cap_hours * 3600) + 1800:
-        offline_ready = false
-        offline_result = {
-            "coins": 0,
-            "mana": 0,
-            "essence": 0,
-            "gems": 0,
-            "hours": 0.0,
-            "summary": "Clock anomaly detected"
-        }
-        return
-    var offline_hours := min(cap_hours, float(offline_seconds) / 3600.0)
-    var multiplier := 0.6
-    if last_session_duration < 600 and last_session_duration > 0:
-        multiplier *= 1.2
-    var base_rate := float(economy.get("base_coin_rate", 5))
-    var coins := int(round(base_rate * offline_hours * multiplier))
-    var mana := int(round(coins * 0.2))
-    var essence := int(round(coins * 0.05))
-    offline_result = {
-        "coins": coins,
-        "mana": mana,
-        "essence": essence,
-        "gems": 0,
-        "hours": offline_hours,
-        "summary": "Away for %.1f h" % offline_hours
-    }
-    offline_ready = coins > 0 or mana > 0 or essence > 0
 
 func has_offline_rewards() -> bool:
     return offline_ready
@@ -270,12 +246,7 @@ func collect_offline(mode: String) -> void:
     if not offline_ready:
         return
     var coins := offline_result.get("coins", 0)
-    if mode == "ad" and monetization.get("offline_double_ads", true) and _can_use_ad():
-        coins *= 2
-        ad_views_today += 1
-    elif mode == "gems" and monetization.get("offline_double_gems", true) and currencies.get("gems", 0) >= 1:
-        if spend_currency("gems", 1):
-            coins *= 2
+
     add_currency("coins", coins)
     add_currency("mana", offline_result.get("mana", 0))
     add_currency("essence", offline_result.get("essence", 0))
@@ -295,7 +266,7 @@ func _can_use_ad() -> bool:
         ad_views_today = 0
         ad_reset_timestamp = now
     var cooldown := int(monetization.get("ad_cooldown_minutes", 10)) * 60
-    if now - breeding_cooldown_end < cooldown:
+
         return false
     if ad_views_today >= int(monetization.get("daily_ad_cap", 3)):
         return false
@@ -306,10 +277,7 @@ func can_use_ad() -> bool:
 
 func consume_ad_view() -> void:
     ad_views_today += 1
-    breeding_cooldown_end = Time.get_unix_time_from_system()
 
-func get_breeding_data() -> Dictionary:
-    var info := economy.get("breeding", {})
     var free_attempts := max(0, int(info.get("free_attempts", 3)) - breeding_attempts_used)
     var cooldown_remaining := max(0, breeding_cooldown_end - Time.get_unix_time_from_system())
     var cooldown_text := ""
@@ -319,12 +287,6 @@ func get_breeding_data() -> Dictionary:
         "attempts": free_attempts,
         "cooldown": cooldown_remaining,
         "cooldown_text": cooldown_text,
-        "gem_fee": int(info.get("gem_fee", 2)),
-        "coins": int(info.get("coins", 0)),
-        "essence": int(info.get("essence", 0))
-    }
-
-func perform_breeding(parent_a: String, parent_b: String, world_id: String) -> Dictionary:
     var info := get_breeding_data()
     if info.get("cooldown", 0) > 0:
         return {"error": "Cooldown active"}
@@ -386,7 +348,6 @@ func reset_breeding_if_needed() -> void:
         breeding_reset_time = now
 
 func apply_prestige(total_value: int) -> int:
-    var rate := float(economy.get("prestige", {}).get("conversion_rate", 0.0005))
     var earned := int(floor(total_value * rate))
     if earned <= 0:
         return 0

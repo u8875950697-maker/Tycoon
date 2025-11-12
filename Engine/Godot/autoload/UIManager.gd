@@ -33,7 +33,6 @@ func register_run_summary(node: AcceptDialog) -> void:
 
 func register_world_select(node: CanvasLayer) -> void:
     world_select = node
-
 func update_currencies(values: Dictionary) -> void:
     if top_bar:
         top_bar.set_currencies(values)
