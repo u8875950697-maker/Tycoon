@@ -1,30 +1,33 @@
-extends CanvasLayer
-class_name TitleScreen
+extends Node
+
+@onready var play_btn     : Button = $"../VBox/Buttons/PlayButton"
+@onready var options_btn  : Button = $"../VBox/Buttons/OptionsButton"
+@onready var quit_btn     : Button = $"../VBox/Buttons/QuitButton"
 
 const WORLD_SCENE := "res://Engine/Godot/scenes/WorldScene.tscn"
-
-@onready var play_btn: Button = $VBox/Buttons/PlayButton
-@onready var options_btn: Button = $VBox/Buttons/OptionsButton
-@onready var quit_btn: Button = $VBox/Buttons/QuitButton
-@onready var options_dialog: AcceptDialog = $OptionsDialog
+var options_dialog: AcceptDialog
 
 func _ready() -> void:
-    play_btn.pressed.connect(_on_play_pressed)
-    options_btn.pressed.connect(_on_options_pressed)
-    quit_btn.pressed.connect(_on_quit_pressed)
+    options_dialog = AcceptDialog.new()
+    options_dialog.title = "Options"
+    add_child(options_dialog)
+    play_btn.pressed.connect(_on_play)
+    options_btn.pressed.connect(_on_options)
+    quit_btn.pressed.connect(_on_quit)
 
-func _on_play_pressed() -> void:
+func _on_play() -> void:
     if ResourceLoader.exists(WORLD_SCENE):
         get_tree().change_scene_to_file(WORLD_SCENE)
     else:
-        push_error("World scene missing at %s" % WORLD_SCENE)
+        push_error("WorldScene not found at: %s" % WORLD_SCENE)
 
-func _on_options_pressed() -> void:
-    options_dialog.dialog_text = "Additional options will be added later."
+func _on_options() -> void:
+    options_dialog.dialog_text = "Options dialog placeholder."
     options_dialog.popup_centered()
 
-func _on_quit_pressed() -> void:
+func _on_quit() -> void:
     if OS.has_feature("web"):
+        options_dialog.title = "Thanks!"
         options_dialog.dialog_text = "Web builds cannot close the window."
         options_dialog.popup_centered()
     else:
