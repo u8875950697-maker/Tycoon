@@ -4,7 +4,7 @@ extends Node
 @onready var options_btn  : Button = $"../VBox/Buttons/OptionsButton"
 @onready var quit_btn     : Button = $"../VBox/Buttons/QuitButton"
 
-const WORLD_SCENE := "res://Engine/Godot/scenes/WorldScene.tscn"
+const WORLD_SCENE := "res://scenes/WorldScene.tscn"
 var options_dialog: AcceptDialog
 
 func _ready() -> void:

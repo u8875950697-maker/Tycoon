@@ -7,7 +7,7 @@ config_version=5
 config/name="Evergrove Tycoon"
 config/description="Paper-style tycoon prototype"
 config/features=PackedStringArray("4.5")
-run/main_scene="res://Engine/Godot/scenes/ui/TitleScreen.tscn"
+run/main_scene="res://scenes/ui/TitleScreen.tscn"
 
 [rendering]
 renderer/rendering_method="forward_plus"
