@@ -1,0 +1,59 @@
+[gd_scene load_steps=2 format=3 uid="uid://options_dialog"]
+
+[ext_resource type="Script" path="res://scripts/ui/OptionsDialog.gd" id="1"]
+
+[node name="OptionsDialog" type="Window"]
+unique_name_in_owner = true
+size = Vector2i(420, 260)
+title = "Options"
+position = Vector2i(240, 120)
+visible = false
+script = ExtResource("1")
+
+[node name="Margin" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 12
+
+[node name="Description" type="Label" parent="Margin/VBox"]
+text = "Audio and accessibility preferences"
+
+[node name="AudioRow" type="HBoxContainer" parent="Margin/VBox"]
+theme_override_constants/separation = 12
+
+[node name="MuteMusic" type="CheckBox" parent="Margin/VBox/AudioRow"]
+unique_name_in_owner = true
+text = "Mute music"
+
+[node name="MuteSfx" type="CheckBox" parent="Margin/VBox/AudioRow"]
+unique_name_in_owner = true
+text = "Mute SFX"
+
+[node name="AccessibilityRow" type="HBoxContainer" parent="Margin/VBox"]
+theme_override_constants/separation = 12
+
+[node name="HighContrast" type="CheckBox" parent="Margin/VBox/AccessibilityRow"]
+unique_name_in_owner = true
+text = "High-contrast HUD"
+
+[node name="ReduceMotion" type="CheckBox" parent="Margin/VBox/AccessibilityRow"]
+unique_name_in_owner = true
+text = "Reduce parallax motion"
+
+[node name="ButtonsRow" type="HBoxContainer" parent="Margin/VBox"]
+align = 2
+
+[node name="CloseButton" type="Button" parent="Margin/VBox/ButtonsRow"]
+unique_name_in_owner = true
+text = "Close"
+custom_minimum_size = Vector2(120, 36)

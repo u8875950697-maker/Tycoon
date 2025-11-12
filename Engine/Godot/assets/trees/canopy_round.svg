@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="192" viewBox="0 0 256 192">
+  <defs>
+    <radialGradient id="leafGradient" cx="0.5" cy="0.4" r="0.6">
+      <stop offset="0%" stop-color="#6fd88b"/>
+      <stop offset="100%" stop-color="#2f8c54"/>
+    </radialGradient>
+    <pattern id="speckle" patternUnits="userSpaceOnUse" width="24" height="24">
+      <rect width="24" height="24" fill="url(#leafGradient)"/>
+      <circle cx="4" cy="6" r="2" fill="#8fe0a5" opacity="0.4"/>
+      <circle cx="16" cy="12" r="2" fill="#226640" opacity="0.35"/>
+      <circle cx="10" cy="18" r="1.8" fill="#3eaf6a" opacity="0.45"/>
+    </pattern>
+  </defs>
+  <path d="M32 120 Q0 56 46 20 Q112 -20 174 16 Q236 48 240 108 Q212 196 128 188 Q52 184 32 120 Z" fill="url(#speckle)" stroke="#215c3a" stroke-width="6" stroke-linejoin="round"/>
+</svg>
