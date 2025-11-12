@@ -1,0 +1,94 @@
+{
+  "wood_tree": {
+    "name": "Wood Tree",
+    "biome": "meadow",
+    "rarity": "basic",
+    "growth_time": 35,
+    "water_need": 0.6,
+    "fertilizer_need": 0.4,
+    "disease_chance": 0.02,
+
+      {"texture": "res://assets/trees/fruit_round.svg", "position": [0.2, 1.4, -0.1], "scale": [0.6, 0.6, 0.6], "modulate": "#f9b842"}
+    ],
+    "fruits": [
+      {"id": "wood_apple", "weight": 1.0}
+    ]
+  },
+  "water_birch": {
+    "name": "Water Birch",
+    "biome": "meadow",
+    "rarity": "basic",
+    "growth_time": 32,
+    "water_need": 0.4,
+    "fertilizer_need": 0.5,
+    "disease_chance": 0.018,
+    "ability": "auto_water",
+
+      {"texture": "res://assets/trees/fruit_round.svg", "position": [-0.2, 1.3, -0.1], "scale": [0.5, 0.5, 0.5], "modulate": "#7bd3ff"}
+    ],
+    "fruits": [
+      {"id": "dew_pearl", "weight": 1.0}
+    ]
+  },
+  "algae_tree": {
+    "name": "Algae Tree",
+    "biome": "swamp",
+    "rarity": "uncommon",
+    "growth_time": 40,
+    "water_need": 0.3,
+    "fertilizer_need": 0.6,
+    "disease_chance": 0.04,
+    "ability": "mana_gen",
+
+      {"texture": "res://assets/trees/fruit_round.svg", "position": [0.1, 1.2, -0.1], "scale": [0.5, 0.5, 0.5], "modulate": "#31c4af"}
+    ],
+    "fruits": [
+      {"id": "algae_pod", "weight": 1.0}
+    ]
+  },
+  "ash_tree": {
+    "name": "Ash Tree",
+    "biome": "volcano",
+    "rarity": "rare",
+    "growth_time": 45,
+    "water_need": 0.8,
+    "fertilizer_need": 0.6,
+    "disease_chance": 0.03,
+    "ability": "crit",
+
+      {"texture": "res://assets/trees/fruit_star.svg", "position": [0.2, 1.5, -0.12], "scale": [0.55, 0.55, 0.55], "modulate": "#ffe59b"}
+    ],
+    "fruits": [
+      {"id": "ember_fruit", "weight": 0.75},
+      {"id": "ember_core", "weight": 0.25}
+    ]
+  },
+  "frost_pine": {
+    "name": "Frost Pine",
+    "biome": "ice_coast",
+    "rarity": "rare",
+
+    ]
+  },
+  "dream_willow": {
+    "name": "Dream Willow",
+    "biome": "dream_isles",
+    "rarity": "epic",
+
+    ]
+  },
+  "prism_lily": {
+    "name": "Prism Lily",
+    "biome": "dream_isles",
+    "rarity": "epic",
+
+    ]
+  },
+  "astral_oak": {
+    "name": "Astral Oak",
+    "biome": "universal",
+    "rarity": "legendary",
+
+    ]
+  }
+}
