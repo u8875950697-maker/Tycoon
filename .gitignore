@@ -2,21 +2,22 @@
 .DS_Store
 Thumbs.db
 
-# Builds (keep Web README)
+# Builds
 Builds/*
 !Builds/.gitkeep
 !Builds/Web/
 Builds/Web/*
 !Builds/Web/README.md
 
-# Archives / temp
+# Temp files
 *.zip
 *.tmp
 
-# Tools
+# Editors
 .vscode/
 .idea/
 
 # Python cache
 __pycache__/
 *.pyc
+
