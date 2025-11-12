@@ -5,10 +5,5 @@
   "ember_fruit": {"coins": 24, "mana": 4, "essence": 2, "rarity": "rare"},
   "ember_core": {"coins": 36, "mana": 6, "essence": 4, "rarity": "epic"},
   "frost_cone": {"coins": 20, "mana": 5, "essence": 2, "rarity": "rare"},
-  "glimmer_berry": {"coins": 28, "mana": 7, "essence": 3, "rarity": "rare"},
-  "dream_petals": {"coins": 26, "mana": 10, "essence": 5, "rarity": "epic"},
-  "prism_blossom": {"coins": 22, "mana": 12, "essence": 4, "rarity": "epic"},
-  "prism_heart": {"coins": 32, "mana": 16, "essence": 6, "rarity": "legendary"},
-  "astral_starfruit": {"coins": 30, "mana": 18, "essence": 6, "gems": 1, "rarity": "legendary"},
-  "astral_shard": {"coins": 42, "mana": 20, "essence": 8, "gems": 2, "rarity": "mythic"}
+
 }

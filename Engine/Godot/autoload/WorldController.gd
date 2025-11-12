@@ -30,8 +30,6 @@ func get_world_offline_cap(world_id: String) -> int:
 func get_base_slots(world_id: String) -> int:
     return int(GameState.get_world_data(world_id).get("base_slots", 3))
 
-func is_breeding_unlocked(world_id: String) -> bool:
-    return bool(GameState.get_world_data(world_id).get("breeding_unlocked", false))
 
 func get_available_tree_ids(world_id: String) -> Array:
     var world_info := GameState.get_world_data(world_id)
@@ -44,7 +42,7 @@ func get_available_tree_ids(world_id: String) -> Array:
     return result
 
 func get_slot_cost(index: int) -> int:
-    return Economy.get_slot_cost(index)
+
 
 func apply_world_bonuses(tree: TreeActor) -> void:
     if tree == null:

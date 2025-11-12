@@ -27,36 +27,18 @@ text = "Press & Craft"
 [node name="Info" type="Label" parent="VBox"]
 text = "Convert fruits into short buffs"
 
-[node name="Recipes" type="VBoxContainer" parent="VBox"]
-custom_minimum_size = Vector2(0, 140)
+[node name="Buttons" type="VBoxContainer" parent="VBox"]
+custom_minimum_size = Vector2(0, 120)
 separation = 6
 
-[node name="GrowthButton" type="Button" parent="VBox/Recipes"]
+[node name="GrowthButton" type="Button" parent="VBox/Buttons"]
 text = "Brew Growth Tonic"
 
-[node name="GrowthDetail" type="Label" parent="VBox/Recipes"]
-text = "Uses: - | Cost: - | Duration: -"
-
-[node name="GrowthSummary" type="Label" parent="VBox/Recipes"]
-text = ""
-
-[node name="HarvestButton" type="Button" parent="VBox/Recipes"]
+[node name="HarvestButton" type="Button" parent="VBox/Buttons"]
 text = "Press Harvest Surge"
 
-[node name="HarvestDetail" type="Label" parent="VBox/Recipes"]
-text = "Uses: - | Cost: - | Duration: -"
-
-[node name="HarvestSummary" type="Label" parent="VBox/Recipes"]
-text = ""
-
-[node name="DropButton" type="Button" parent="VBox/Recipes"]
+[node name="DropButton" type="Button" parent="VBox/Buttons"]
 text = "Distill Drop Charm"
-
-[node name="DropDetail" type="Label" parent="VBox/Recipes"]
-text = "Uses: - | Cost: - | Duration: -"
-
-[node name="DropSummary" type="Label" parent="VBox/Recipes"]
-text = ""
 
 [node name="Status" type="Label" parent="VBox"]
 text = "No active buffs"

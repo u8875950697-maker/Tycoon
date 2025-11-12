@@ -1,20 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://f454d6c7eaf249ea97e2edd94548bd2d"]
+[gd_scene load_steps=2 format=3 uid="uid://f454d6c7eaf249ea97e2edd94548bd2d"]
 
 [ext_resource type="Script" path="res://scenes/ui/TopBar.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/ui/vignette.svg" id="2"]
 
 [node name="TopBar" type="Control"]
 script = ExtResource("1")
 layout_mode = 3
 anchors_preset = 1
 anchor_right = 1.0
-offset_bottom = 72.0
+offset_bottom = 64.0
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 1
 anchor_right = 1.0
-offset_bottom = 72.0
+offset_bottom = 64.0
 
 [node name="HBox" type="HBoxContainer" parent="Panel"]
 layout_mode = 1
@@ -24,141 +23,24 @@ offset_left = 16.0
 offset_top = 8.0
 offset_right = -16.0
 offset_bottom = -8.0
-separation = 12
 
-[node name="WorldBlock" type="VBoxContainer" parent="Panel/HBox"]
-custom_minimum_size = Vector2(220, 0)
-
-[node name="WorldRow" type="HBoxContainer" parent="Panel/HBox/WorldBlock"]
-separation = 6
-
-[node name="WorldLabel" type="Label" parent="Panel/HBox/WorldBlock/WorldRow"]
-unique_name_in_owner = true
+[node name="WorldLabel" type="Label" parent="Panel/HBox"]
 text = "World: -"
 
-[node name="HazardIcon" type="TextureRect" parent="Panel/HBox/WorldBlock/WorldRow"]
-unique_name_in_owner = true
-texture = ExtResource("2")
-expand = true
-stretch_mode = 4
-size_flags_horizontal = 0
-size_flags_vertical = 0
-modulate = Color(1, 1, 1, 0.0)
-tooltip_text = ""
+[node name="CoinsLabel" type="Label" parent="Panel/HBox"]
+text = "Coins: 0"
 
-[node name="HazardLabel" type="Label" parent="Panel/HBox/WorldBlock/WorldRow"]
-unique_name_in_owner = true
-text = ""
+[node name="ManaLabel" type="Label" parent="Panel/HBox"]
+text = "Mana: 0"
 
-[node name="BuffRow" type="HBoxContainer" parent="Panel/HBox/WorldBlock"]
-separation = 6
+[node name="EssenceLabel" type="Label" parent="Panel/HBox"]
+text = "Essence: 0"
 
-[node name="BuffButton" type="Button" parent="Panel/HBox/WorldBlock/BuffRow"]
-unique_name_in_owner = true
-text = "World Buff"
-size_flags_horizontal = 1
+[node name="GemsLabel" type="Label" parent="Panel/HBox"]
+text = "Gems: 0"
 
-[node name="BuffStatus" type="Label" parent="Panel/HBox/WorldBlock/BuffRow"]
-unique_name_in_owner = true
-text = "Once per run"
+[node name="SeedsLabel" type="Label" parent="Panel/HBox"]
+text = "Seeds: 0"
 
-[node name="Spacer" type="Control" parent="Panel/HBox"]
-size_flags_horizontal = 3
-
-[node name="ActiveBuff" type="HBoxContainer" parent="Panel/HBox"]
-separation = 4
-visible = false
-
-[node name="BuffIcon" type="TextureRect" parent="Panel/HBox/ActiveBuff"]
-unique_name_in_owner = true
-texture = ExtResource("2")
-expand = true
-stretch_mode = 4
-custom_minimum_size = Vector2(24, 24)
-
-[node name="BuffLabel" type="Label" parent="Panel/HBox/ActiveBuff"]
-unique_name_in_owner = true
-text = "Buff"
-
-[node name="Resources" type="HBoxContainer" parent="Panel/HBox"]
-alignment = 2
-separation = 8
-size_flags_horizontal = 2
-
-[node name="Coins" type="HBoxContainer" parent="Panel/HBox/Resources"]
-separation = 4
-
-[node name="CoinsIcon" type="TextureRect" parent="Panel/HBox/Resources/Coins"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(20, 20)
-expand = true
-stretch_mode = 4
-
-[node name="CoinsLabel" type="Label" parent="Panel/HBox/Resources/Coins"]
-unique_name_in_owner = true
-text = "0"
-
-[node name="Mana" type="HBoxContainer" parent="Panel/HBox/Resources"]
-separation = 4
-
-[node name="ManaIcon" type="TextureRect" parent="Panel/HBox/Resources/Mana"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(20, 20)
-expand = true
-stretch_mode = 4
-
-[node name="ManaLabel" type="Label" parent="Panel/HBox/Resources/Mana"]
-unique_name_in_owner = true
-text = "0"
-
-[node name="Essence" type="HBoxContainer" parent="Panel/HBox/Resources"]
-separation = 4
-
-[node name="EssenceIcon" type="TextureRect" parent="Panel/HBox/Resources/Essence"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(20, 20)
-expand = true
-stretch_mode = 4
-
-[node name="EssenceLabel" type="Label" parent="Panel/HBox/Resources/Essence"]
-unique_name_in_owner = true
-text = "0"
-
-[node name="Gems" type="HBoxContainer" parent="Panel/HBox/Resources"]
-separation = 4
-
-[node name="GemsIcon" type="TextureRect" parent="Panel/HBox/Resources/Gems"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(20, 20)
-expand = true
-stretch_mode = 4
-
-[node name="GemsLabel" type="Label" parent="Panel/HBox/Resources/Gems"]
-unique_name_in_owner = true
-text = "0"
-
-[node name="Seeds" type="HBoxContainer" parent="Panel/HBox/Resources"]
-separation = 4
-
-[node name="SeedsIcon" type="TextureRect" parent="Panel/HBox/Resources/Seeds"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(20, 20)
-expand = true
-stretch_mode = 4
-
-[node name="SeedsLabel" type="Label" parent="Panel/HBox/Resources/Seeds"]
-unique_name_in_owner = true
-text = "0"
-
-[node name="Timer" type="HBoxContainer" parent="Panel/HBox"]
-separation = 4
-
-[node name="TimerIcon" type="TextureRect" parent="Panel/HBox/Timer"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(24, 24)
-expand = true
-stretch_mode = 4
-
-[node name="TimerLabel" type="Label" parent="Panel/HBox/Timer"]
-unique_name_in_owner = true
-text = "0:00"
+[node name="TimerLabel" type="Label" parent="Panel/HBox"]
+text = "Time: 0:00"

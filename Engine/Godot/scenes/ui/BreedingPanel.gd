@@ -11,8 +11,7 @@ signal breed_requested(parent_a: String, parent_b: String)
 @onready var breed_button: Button = $VBox/BreedButton
 
 var tree_ids: Array[String] = []
-var locked := false
-var locked_reason := ""
+
 
 func _ready() -> void:
     breed_button.pressed.connect(_on_breed_pressed)
@@ -28,9 +27,7 @@ func set_tree_options(ids: Array) -> void:
     parent_b_option.select(0 if ids.size() > 1 else 0)
 
 func set_attempts_remaining(free_attempts: int, cooldown_text: String) -> void:
-    if locked:
-        attempts_label.text = locked_reason if locked_reason != "" else "Breeding locked"
-        return
+
     attempts_label.text = "Attempts left: %d %s" % [free_attempts, cooldown_text]
     breed_button.disabled = free_attempts <= 0 and cooldown_text != ""
 
@@ -40,20 +37,7 @@ func set_odds_text(text: String) -> void:
 func set_result(text: String) -> void:
     result_label.text = text
 
-func set_locked(state: bool, reason: String = "") -> void:
-    locked = state
-    locked_reason = reason
-    parent_a_option.disabled = state
-    parent_b_option.disabled = state
-    breed_button.disabled = state
-    if state:
-        result_label.text = "Result: %s" % (reason if reason != "" else "Locked")
-    else:
-        locked_reason = ""
-        result_label.text = "Result:"
 
-func _on_breed_pressed() -> void:
-    if tree_ids.is_empty() or locked:
         return
     var parent_a_idx := parent_a_option.get_selected_id()
     var parent_b_idx := parent_b_option.get_selected_id()

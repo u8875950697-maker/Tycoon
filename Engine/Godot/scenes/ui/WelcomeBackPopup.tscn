@@ -38,8 +38,5 @@ text = "Collect x2 (Ad)"
 [node name="CollectGem" type="Button" parent="VBox/Buttons"]
 text = "Collect x2 (Gems)"
 
-[node name="NoThanks" type="Button" parent="VBox/Buttons"]
-text = "No thanks"
-
 [node name="Note" type="Label" parent="VBox"]
-text = "Offline earnings capped; doubles apply to Coins only and are limited to one per day. Choose Collect or No thanks to skip ads."
+text = "Offline earnings capped; doubles apply to Coins only."

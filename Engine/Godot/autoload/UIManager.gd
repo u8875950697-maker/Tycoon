@@ -9,10 +9,6 @@ var prestige_panel: Panel
 var welcome_popup: AcceptDialog
 var run_summary: AcceptDialog
 var world_select: CanvasLayer
-var world_scene: Node
-
-var high_contrast_enabled := false
-var reduce_motion_enabled := false
 
 func register_top_bar(node: TopBar) -> void:
     top_bar = node
@@ -37,28 +33,9 @@ func register_run_summary(node: AcceptDialog) -> void:
 
 func register_world_select(node: CanvasLayer) -> void:
     world_select = node
-
-func register_world_scene(node: Node) -> void:
-    world_scene = node
-    apply_high_contrast(high_contrast_enabled)
-    apply_reduce_motion(reduce_motion_enabled)
-
 func update_currencies(values: Dictionary) -> void:
     if top_bar:
         top_bar.set_currencies(values)
-
-func update_world_status(name: String, hazard: Dictionary) -> void:
-    if top_bar:
-        top_bar.set_world_info(name, hazard)
-
-func configure_world_buff(info: Dictionary, available: bool, status_text: String, tooltip: String) -> void:
-    if top_bar:
-        top_bar.set_world_buff(info, available, status_text)
-        top_bar.set_buff_button_tooltip(tooltip)
-
-func update_buff_badge(preview: Dictionary) -> void:
-    if top_bar:
-        top_bar.set_buff_badge(preview)
 
 func show_tree_details(tree: TreeActor, info: Dictionary) -> void:
     if tree_panel and tree_panel is TreePanel:
@@ -102,25 +79,3 @@ func show_world_select(worlds: Dictionary) -> void:
 func hide_world_select() -> void:
     if world_select:
         world_select.visible = false
-
-func apply_high_contrast(enabled: bool) -> void:
-    high_contrast_enabled = enabled
-    var modulate_color := enabled ? Color(1.1, 1.1, 1.1, 1) : Color(1, 1, 1, 1)
-    if top_bar:
-        if top_bar.has_method("apply_high_contrast"):
-            top_bar.apply_high_contrast(enabled)
-        else:
-            top_bar.self_modulate = modulate_color
-    for panel in [tree_panel, press_panel, breeding_panel, prestige_panel]:
-        if panel:
-            panel.self_modulate = modulate_color
-    for popup in [welcome_popup, run_summary]:
-        if popup:
-            popup.self_modulate = modulate_color
-    if world_select and world_select is CanvasItem:
-        world_select.self_modulate = modulate_color
-
-func apply_reduce_motion(enabled: bool) -> void:
-    reduce_motion_enabled = enabled
-    if world_scene and world_scene.has_method("apply_reduce_motion"):
-        world_scene.apply_reduce_motion(enabled)
