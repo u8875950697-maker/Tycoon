@@ -1,39 +1,39 @@
-# Tycoon
+# Evergrove Tycoon (Paper 2.5D Prototype)
+
+A lightweight Godot 4.5.1 prototype prepared for a paper-craft tycoon game. This repository currently provides a minimal bootable project with a title menu that transitions into a simple world scene for further development.
+
+## Quickstart
+1. Install [Godot 4.5.1](https://godotengine.org/).
+2. Open `Engine/Godot/project.godot` in the editor.
+3. Press <kbd>F5</kbd> to run the project. The title screen appears with Play, Options, and End buttons.
+4. Click **Play** to load the world scene with camera, light, and ground visible.
 
 ## Project Structure
-- `Assets/` – Placeholder for audio, VFX, and shared asset references.
-- `Art/` – Concept, textures, UI mockups, and model references.
-- `Scripts/` – Future gameplay or tool scripts (currently empty).
-- `Scenes/` – Scene or level files once an engine is chosen.
-- `Docs/` – Design notes, roadmap, contributing info, and changelog.
-- `Builds/` – Reserved for packaged builds or demos.
-- `Tools/` – Pipelines, importers, or automation helpers.
-- `Tests/` – Testing plans or automation.
-- `Config/` – Project-wide configuration or environment files.
-- `.github/` – Issue and PR templates plus workflow definitions.
+```
+Engine/Godot/
+├── assets/              # Paper-style SVG textures (existing library)
+├── project.godot        # Godot 4.5.1 project definition
+├── scenes/
+│   ├── WorldScene.tscn  # Minimal 3D stage with camera/light/ground
+│   └── ui/
+│       └── TitleScreen.tscn  # Title menu with navigation buttons
+└── scripts/
+    ├── ui/TitleScreen.gd     # Menu logic and scene switching
+    └── world/WorldScene.gd   # Ensures camera activation on load
 
-## Short-Session Design & Monetization Overview
-- Worlds operate as short-form stages with themed biomes and clear completion rewards.
-- Tree slots expand gradually within each world, keeping runs readable and strategic.
-- Breeding unlocks in later worlds to blend traits for hybrid seeds without overwhelming early play.
-- Rewarded ads stay optional, offering double-harvest moments, slot tokens, or brief speed boosts.
-- Paper-inspired art direction guides layered, faux-3D presentation for trees and UI.
+Builds/Web/README.md     # HTML5 export instructions
+.githooks/no-conflict-markers # Enforces conflict-free commits
+```
 
-## Offline/AFK & Welcome-Back Overview
-- Offline earnings accrue at 60% of online rates with stage-based hour caps and Prestige multipliers.
-- Welcome-back popups highlight time away, resources gained, and offer optional ad or gem doubles for Coins only with strict daily caps.
-- Ethical guardrails ensure clear opt-outs, no forced prompts, and respect for short-session pacing.
-- Daily streaks and catch-up boosts keep returning players rewarded without encouraging grind.
+## Current Features
+- Title screen with Play, Options (placeholder dialog), and End (desktop quit or web info) actions.
+- Play button loads the 3D world scene containing a lit ground plane for immediate visual feedback.
+- Basic Godot 4.5.1 configuration with no remaining merge conflicts and clean autoload list.
 
-## Paper-Style Texture Placeholders
-- All interim textures rely on shared SVG paper patterns, layered sprites, and parallax depth with no photographic sources.
+## Web Export
+An HTML5 preset can be added in Godot via **Project → Export**. Target the `Builds/Web/` directory when generating the build. See `Builds/Web/README.md` for the summarized upload workflow.
 
-## Engine & Build
-- The full Godot 4.x project lives in `Engine/Godot` with layered Sprite3D trees, parallax terrain, and autoload singletons for state, UI, and world control.
-- Open the project in the Godot editor to play the short-session loop or tweak design data in `Engine/Godot/data`.
-- A ready-to-use HTML5 export preset writes to `Builds/Web/`; see `Builds/Web/README.md` for the upload checklist.
-
-## Playable Loop Highlights
-- Five themed worlds (Meadow through Dream Isles) each provide a 4×4 grid, hazards, and short-run objectives with selectable session lengths.
-- Tree care, fruit harvesting, processing buffs, breeding (World 2+), offline rewards, and prestige systems are implemented without placeholder logic.
-- Ethical rewarded-ad stubs gate optional coin doubles and slot unlocks while dev cheats stay toggleable for quick QA.
+## Contributing
+- Keep commits small and avoid reintroducing Git conflict markers (guarded by `.githooks/no-conflict-markers`).
+- Add new features incrementally, preserving the paper-style direction and lightweight asset footprint.
+- Prefer Godot 4.5.1-compatible syntax (`@onready`, signal connections via `.connect`).
