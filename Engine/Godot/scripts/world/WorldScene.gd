@@ -1,7 +1,7 @@
 extends Node3D
 class_name WorldScene
 
-@onready var cam: Camera3D = has_node("Camera") ? get_node("Camera") as Camera3D : null
+@onready var cam: Camera3D = $"Camera" if has_node("Camera") else null
 
 func _ready() -> void:
     if cam:

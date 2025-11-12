@@ -1,16 +1,10 @@
-extends CanvasLayer
+extends Node
 class_name UIManager
 
-var screens := {}
+func show_window(window: Window) -> void:
+    if window:
+        window.popup_centered()
 
-func register_screen(name: String, node: Node) -> void:
-    screens[name] = node
-
-func show_screen(name: String) -> void:
-    for key in screens.keys():
-        var screen := screens[key]
-        screen.visible = (key == name)
-
-func hide_all() -> void:
-    for screen in screens.values():
-        screen.visible = false
+func hide_window(window: Window) -> void:
+    if window:
+        window.hide()

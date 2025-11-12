@@ -14,10 +14,13 @@ Engine/Godot/
 ├── assets/              # Paper-style SVG textures (existing library)
 ├── project.godot        # Godot 4.5.1 project definition
 ├── scenes/
-│   ├── WorldScene.tscn  # Minimal 3D stage with camera/light/ground
-│   └── ui/
-│       └── TitleScreen.tscn  # Title menu with navigation buttons
+│   └── WorldScene.tscn        # Minimal 3D stage with camera/light/ground
+├── ui/
+│   └── TitleScreen.tscn       # Title menu with navigation buttons
 └── scripts/
+    ├── GameState.gd          # Autoload stub for currencies/save shell
+    ├── UIManager.gd          # Autoload stub for popup helpers
+    ├── WorldController.gd    # Autoload stub for grid math utilities
     ├── ui/TitleScreen.gd     # Menu logic and scene switching
     └── world/WorldScene.gd   # Ensures camera activation on load
 
