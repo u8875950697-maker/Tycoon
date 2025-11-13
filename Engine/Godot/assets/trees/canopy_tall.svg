@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="240" viewBox="0 0 220 240">
+  <defs>
+    <radialGradient id="iceGradient" cx="0.5" cy="0.4" r="0.7">
+      <stop offset="0%" stop-color="#c8e6ff"/>
+      <stop offset="100%" stop-color="#5a89c5"/>
+    </radialGradient>
+    <pattern id="iceSpeckle" patternUnits="userSpaceOnUse" width="28" height="32">
+      <rect width="28" height="32" fill="url(#iceGradient)"/>
+      <circle cx="12" cy="10" r="3" fill="#f0fbff" opacity="0.45"/>
+      <path d="M4 0 L8 16" stroke="#436b9f" stroke-width="1.5" opacity="0.35"/>
+      <path d="M20 12 L16 28" stroke="#6aa0d4" stroke-width="1.5" opacity="0.35"/>
+    </pattern>
+  </defs>
+  <path d="M40 200 Q8 92 54 32 Q112 -20 172 26 Q230 70 204 172 Q188 228 110 232 Q58 236 40 200 Z" fill="url(#iceSpeckle)" stroke="#3a5f8f" stroke-width="6" stroke-linejoin="round"/>
+</svg>
