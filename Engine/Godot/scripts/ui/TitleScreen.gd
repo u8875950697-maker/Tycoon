@@ -1,34 +1,51 @@
 extends Node
 
-@onready var play_btn     : Button = $"../VBox/Buttons/PlayButton"
-@onready var options_btn  : Button = $"../VBox/Buttons/OptionsButton"
-@onready var quit_btn     : Button = $"../VBox/Buttons/QuitButton"
+@onready var btn_play: Button   = $"../VBox/Play"
+@onready var btn_opts: Button   = $"../VBox/Options"
+@onready var btn_quit: Button   = $"../VBox/Quit"
+
+@onready var layer_hills: ColorRect  = $"../LayerHills"
+@onready var layer_trees: ColorRect  = $"../LayerTrees"
 
 const WORLD_SCENE := "res://scenes/WorldScene.tscn"
-var options_dialog: AcceptDialog
+
+var t: float = 0.0
 
 func _ready() -> void:
-    options_dialog = AcceptDialog.new()
-    options_dialog.title = "Options"
-    add_child(options_dialog)
-    play_btn.pressed.connect(_on_play)
-    options_btn.pressed.connect(_on_options)
-    quit_btn.pressed.connect(_on_quit)
+    if btn_play:
+        btn_play.pressed.connect(_play)
+    if btn_opts:
+        btn_opts.pressed.connect(_opts)
+    if btn_quit:
+        btn_quit.pressed.connect(_quit)
 
-func _on_play() -> void:
+func _process(delta: float) -> void:
+    t += delta
+    # very light fake parallax motion
+    if layer_hills:
+        layer_hills.position.x = sin(t * 0.2) * 8.0
+    if layer_trees:
+        layer_trees.position.x = cos(t * 0.3) * 10.0
+
+func _play() -> void:
     if ResourceLoader.exists(WORLD_SCENE):
         get_tree().change_scene_to_file(WORLD_SCENE)
     else:
-        push_error("WorldScene not found at: %s" % WORLD_SCENE)
+        push_error("WorldScene missing: %s" % WORLD_SCENE)
 
-func _on_options() -> void:
-    options_dialog.dialog_text = "Options dialog placeholder."
-    options_dialog.popup_centered()
+func _opts() -> void:
+    var d := AcceptDialog.new()
+    d.title = "Options"
+    d.dialog_text = "High contrast / reduce motion will be hooked up later."
+    add_child(d)
+    d.popup_centered()
 
-func _on_quit() -> void:
+func _quit() -> void:
     if OS.has_feature("web"):
-        options_dialog.title = "Thanks!"
-        options_dialog.dialog_text = "Web builds cannot close the window."
-        options_dialog.popup_centered()
+        var d := AcceptDialog.new()
+        d.title = "Cannot Quit"
+        d.dialog_text = "Web builds cannot close the window."
+        add_child(d)
+        d.popup_centered()
     else:
         get_tree().quit()

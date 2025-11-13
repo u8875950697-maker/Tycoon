@@ -1,64 +1,54 @@
 extends Window
+class_name OptionsDialog
 
-signal setting_changed(key: String, value)
-
-@onready var close_button: Button = %CloseButton
-@onready var mute_music: CheckBox = %MuteMusic
-@onready var mute_sfx: CheckBox = %MuteSfx
-@onready var high_contrast: CheckBox = %HighContrast
-@onready var reduce_motion: CheckBox = %ReduceMotion
+@onready var mute_music: CheckBox = %MuteMusic if has_node("%MuteMusic") else null
+@onready var mute_sfx: CheckBox = %MuteSfx if has_node("%MuteSfx") else null
+@onready var high_contrast: CheckBox = %HighContrast if has_node("%HighContrast") else null
+@onready var reduce_motion: CheckBox = %ReduceMotion if has_node("%ReduceMotion") else null
+@onready var close_button: Button = %CloseButton if has_node("%CloseButton") else null
 
 func _ready() -> void:
+    _apply_initial_values()
+    if mute_music:
+        mute_music.toggled.connect(_on_mute_music_toggled)
+    if mute_sfx:
+        mute_sfx.toggled.connect(_on_mute_sfx_toggled)
+    if high_contrast:
+        high_contrast.toggled.connect(_on_high_contrast_toggled)
+    if reduce_motion:
+        reduce_motion.toggled.connect(_on_reduce_motion_toggled)
     if close_button:
         close_button.pressed.connect(_on_close_pressed)
-        close_requested.connect(_on_close_pressed)
-    if mute_music:
-        mute_music.toggled.connect(_on_mute_music)
-    if mute_sfx:
-        mute_sfx.toggled.connect(_on_mute_sfx)
-    if high_contrast:
-        high_contrast.toggled.connect(_on_high_contrast)
-    if reduce_motion:
-        reduce_motion.toggled.connect(_on_reduce_motion)
-    _apply_saved_settings()
 
-func _apply_saved_settings() -> void:
-    var settings := GameState.get_all_settings()
+func _apply_initial_values() -> void:
     if mute_music:
-        mute_music.button_pressed = bool(settings.get("mute_music", false))
+        mute_music.button_pressed = bool(GameState.get_setting("mute_music", false))
     if mute_sfx:
-        mute_sfx.button_pressed = bool(settings.get("mute_sfx", false))
+        mute_sfx.button_pressed = bool(GameState.get_setting("mute_sfx", false))
     if high_contrast:
-        high_contrast.button_pressed = bool(settings.get("high_contrast", false))
+        var enabled := bool(GameState.get_setting("high_contrast", false))
+        high_contrast.button_pressed = enabled
+        UIManager.apply_high_contrast(enabled)
     if reduce_motion:
-        reduce_motion.button_pressed = bool(settings.get("reduce_motion", false))
+        var enabled_rm := bool(GameState.get_setting("reduce_motion", false))
+        reduce_motion.button_pressed = enabled_rm
+        UIManager.apply_reduce_motion(enabled_rm)
+
+func _on_mute_music_toggled(pressed: bool) -> void:
+    GameState.set_setting("mute_music", pressed)
+
+func _on_mute_sfx_toggled(pressed: bool) -> void:
+    GameState.set_setting("mute_sfx", pressed)
+
+func _on_high_contrast_toggled(pressed: bool) -> void:
+    GameState.set_setting("high_contrast", pressed)
+    UIManager.apply_high_contrast(pressed)
+    UIManager.toast("High contrast %s" % ("enabled" if pressed else "disabled"))
+
+func _on_reduce_motion_toggled(pressed: bool) -> void:
+    GameState.set_setting("reduce_motion", pressed)
+    UIManager.apply_reduce_motion(pressed)
+    UIManager.toast("Reduce motion %s" % ("enabled" if pressed else "disabled"))
 
 func _on_close_pressed() -> void:
     hide()
-
-func _on_mute_music(value: bool) -> void:
-    GameState.set_setting("mute_music", value)
-    _update_audio_bus("Music", value)
-    emit_signal("setting_changed", "mute_music", value)
-
-func _on_mute_sfx(value: bool) -> void:
-    GameState.set_setting("mute_sfx", value)
-    _update_audio_bus("SFX", value)
-    emit_signal("setting_changed", "mute_sfx", value)
-
-func _on_high_contrast(value: bool) -> void:
-    GameState.set_setting("high_contrast", value)
-    UIManager.apply_high_contrast(value)
-    emit_signal("setting_changed", "high_contrast", value)
-
-func _on_reduce_motion(value: bool) -> void:
-    GameState.set_setting("reduce_motion", value)
-    UIManager.apply_reduce_motion(value)
-    emit_signal("setting_changed", "reduce_motion", value)
-
-func _update_audio_bus(bus_name: String, mute: bool) -> void:
-    var index := AudioServer.get_bus_index(bus_name)
-    if index == -1:
-        index = AudioServer.get_bus_index("Master")
-    if index != -1:
-        AudioServer.set_bus_mute(index, mute)
