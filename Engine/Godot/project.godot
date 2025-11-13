@@ -1,0 +1,26 @@
+; Engine configuration file.
+
+[gd_project]
+config_version=5
+
+[application]
+config/name="Grovecraft Tycoon"
+config/description="Pixel title prototype"
+config/features=PackedStringArray("4.5")
+run/main_scene="res://ui/TitleScreen.tscn"
+
+[autoload]
+GameState="*res://scripts/GameState.gd"
+UIManager="*res://scripts/UIManager.gd"
+
+[rendering]
+renderer/rendering_method="forward_plus"
+renderer/rendering_method_mobile="forward_plus"
+textures/default_filters/filter=false
+2d/options/use_gpu_pixel_snap=true
+
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
