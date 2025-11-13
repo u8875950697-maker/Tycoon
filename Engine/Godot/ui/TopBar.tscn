@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3 uid="uid://f454d6c7eaf249ea97e2edd94548bd2d"]
+
+[ext_resource type="Script" path="res://scripts/TopBar.gd" id="1"]
+
+[node name="TopBar" type="Control"]
+script = ExtResource("1")
+layout_mode = 3
+anchors_preset = 1
+anchor_right = 1.0
+offset_bottom = 64.0
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_right = 1.0
+offset_bottom = 64.0
+
+[node name="HBox" type="HBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 8.0
+offset_right = -16.0
+offset_bottom = -8.0
+
+[node name="CoinsLabel" type="Label" parent="Panel/HBox"]
+text = "Coins: 0"
+
+[node name="ManaLabel" type="Label" parent="Panel/HBox"]
+text = "Mana: 0"
+
+[node name="EssenceLabel" type="Label" parent="Panel/HBox"]
+text = "Essence: 0"
+
+[node name="GemsLabel" type="Label" parent="Panel/HBox"]
+text = "Gems: 0"
+
+[node name="SeedsLabel" type="Label" parent="Panel/HBox"]
+text = "Seeds: 0"

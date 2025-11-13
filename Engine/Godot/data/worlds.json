@@ -1,0 +1,47 @@
+{
+  "meadow": {
+    "display_name": "Meadow",
+    "tier": "early",
+    "offline_cap_hours": 4,
+    "session_lengths": [5, 10, 20],
+    "base_slots": 3,
+    "native_trees": ["wood_tree", "water_birch"],
+
+  },
+  "swamp": {
+    "display_name": "Sunkissed Swamp",
+    "tier": "early",
+    "offline_cap_hours": 4,
+    "session_lengths": [5, 10, 20],
+    "base_slots": 3,
+    "native_trees": ["algae_tree", "water_birch"],
+
+  },
+  "volcano": {
+    "display_name": "Volcano Ridge",
+    "tier": "mid",
+    "offline_cap_hours": 6,
+    "session_lengths": [5, 10, 20],
+    "base_slots": 4,
+    "native_trees": ["ash_tree"],
+
+  },
+  "ice_coast": {
+    "display_name": "Ice Coast",
+    "tier": "mid",
+    "offline_cap_hours": 6,
+    "session_lengths": [5, 10, 20],
+    "base_slots": 4,
+    "native_trees": ["frost_pine"],
+
+  },
+  "dream_isles": {
+    "display_name": "Dream Isles",
+    "tier": "late",
+    "offline_cap_hours": 8,
+    "session_lengths": [10, 20],
+    "base_slots": 5,
+    "native_trees": ["dream_willow", "prism_lily"],
+
+  }
+}
