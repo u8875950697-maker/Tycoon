@@ -1,7 +1,7 @@
 extends Node
 class_name GameState
 
-var coins: int = 0
+@export var coins: int = 0
 var mana: int = 0
 var essence: int = 0
 var gems: int = 0
@@ -9,7 +9,8 @@ var seeds: int = 0
 
 var settings: Dictionary = {
     "high_contrast": false,
-    "reduce_motion": false
+    "reduce_motion": false,
+    "effects_enabled": true
 }
 
 func add_coins(amount: int) -> void:
@@ -28,7 +29,9 @@ func add_seeds(amount: int) -> void:
     seeds = max(0, seeds + amount)
 
 func get_setting(key: String, default_value: Variant = null) -> Variant:
-    return settings.get(key, default_value)
+    if settings.has(key):
+        return settings[key]
+    return default_value
 
 func set_setting(key: String, value: Variant) -> void:
     settings[key] = value
