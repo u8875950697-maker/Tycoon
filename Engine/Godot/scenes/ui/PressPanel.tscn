@@ -1,0 +1,48 @@
+[gd_scene load_steps=2 format=3 uid="uid://presspanel"]
+
+[ext_resource type="Script" path="res://scenes/ui/PressPanel.gd" id="1"]
+
+[node name="PressPanel" type="Panel"]
+script = ExtResource("1")
+anchors_preset = 5
+anchor_left = 0.35
+anchor_right = 0.65
+anchor_bottom = 0.25
+offset_top = 12.0
+offset_bottom = 200.0
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+
+[node name="Title" type="Label" parent="VBox"]
+text = "Press & Craft"
+
+[node name="Info" type="Label" parent="VBox"]
+text = "Convert fruits into short buffs"
+
+[node name="Buttons" type="VBoxContainer" parent="VBox"]
+custom_minimum_size = Vector2(0, 120)
+separation = 6
+
+[node name="GrowthButton" type="Button" parent="VBox/Buttons"]
+text = "Brew Growth Tonic"
+
+[node name="HarvestButton" type="Button" parent="VBox/Buttons"]
+text = "Press Harvest Surge"
+
+[node name="DropButton" type="Button" parent="VBox/Buttons"]
+text = "Distill Drop Charm"
+
+[node name="Status" type="Label" parent="VBox"]
+text = "No active buffs"
+
+[node name="DevToggle" type="CheckButton" parent="VBox"]
+text = "Enable Dev Cheats"
+visible = false
